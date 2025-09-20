@@ -1,0 +1,49 @@
+{extend name="base" /}
+{block name="body"}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form action="{:request()->url()}" class="layui-form" method="post">
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="mobile" value="{$data.mobile|default=''}" autocomplete="off" placeholder="请输入手机号" lay-verify="required|phone|number" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">账户金额</label>
+                <div class="layui-input-block">
+                    <input type="number" name="money" value="{$data.money|default=''}" autocomplete="off" placeholder="请输入金额"  class="layui-input">
+                </div>
+            </div>
+			<div class="layui-form-item">
+                <label class="layui-form-label">联系QQ</label>
+                <div class="layui-input-block">
+                    <input type="number" name="qq" value="{$data.qq|default=''}" autocomplete="off" placeholder="请输入qq"  class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登陆密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="password" value="" autocomplete="off" placeholder="请输入密码" class="layui-input">
+                </div>
+				{notempty name="$data.password"}
+				<div class="layui-form-mid layui-word-aux">不修改留空</div>{/notempty}
+            </div>
+			<div class="layui-form-item">
+                <label class="layui-form-label">安全密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="tradepwd" value="" autocomplete="off" placeholder="请输入密码" class="layui-input">
+                </div>
+				{notempty name="$data.tradepwd"}
+				<div class="layui-form-mid layui-word-aux ">不修改留空</div>{/notempty}
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-filter="i" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}

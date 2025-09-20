@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  {block name="titile"}
+  <title>{$C['sitename']}-{$C['title']} </title>
+  <meta name="keywords" content="{$C['keywords']}" />
+  <meta name="description" content="{$C['description']}" />
+  {/block}
+  <meta name="robots" content="all" />
+  <link href="__CSS__/animate.css?20191011" rel="stylesheet" />
+  <link href="__CSS__/common.css?2020327" rel="stylesheet" />
+  <link href="__CSS__/base.css?2020327" rel="stylesheet" />
+  <script type="text/javascript" src="__JS__/j_lipin.js?20190520"></script>
+  <script type="text/javascript" src="__JS__/library.js?20190"></script>
+  <script type="text/javascript" src="__JS__/common.js?20205823"></script>
+  <meta name="baidu-site-verification" content="code-W7e3uhR6xr" />
+  <meta name="shenma-site-verification" content="6a93b5494925f504b599b5e92510e0d7_1603538572">
+  <!-- aixiaoka.net Baidu tongji analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?651a89293c33d2acb27f1f5e0da8e617";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+ </head>
+ <body>
+  <div id="modal-dialog" class="modal hide"></div>
+  <div class="modal-cover hide" id="modal-dialog-cover"></div>
+  <div class="header" id="header">
+   <div class="navbar " id="navbar" data-navbar="">
+    <div class="container-fluid">
+     <div class="navbar-brand" id="logo">
+      <a href="/"><span class="logo"><img src="{$C['logo']}" style="display:block;margin: auto;" alt="{$C['sitename']}" /></span></a>
+     </div>
+     <div class="navbar-primary" id="navbar-primary">
+     <ul class="navbar-nav clearfix">
+   <li id="navbar-home"><a href="/"><i class="iconfont"></i><span>首页</span></a></li> 
+   <li class="" id="navbar-sell" data-hover="dropdown"><a href="{:url('home/card/index')}"><i class="iconfont"></i><span>我要销卡</span></a><a class="sr-only" href="{:url('home/card/index')}"><i class="iconfont"></i><span>我要销卡/span></a>
+    <div class="dropdown-menu animated zoomIn">
+     <ul class="navbar-cardnav clearfix">
+	 {volist name="cardModel" id="p"}
+	 {eq name="p.status" value="1"}
+      <li><a href="{:url('home/card/index',['cid'=>$p.id])}">
+        <div class="card">
+         <img class="cover" src="{$p.image}" />
+         <img class="mid" src="{$p.image}" />
+         <img class="down" src="{$p.image}" />
+        </div><span>{$p.title}回收</span></a></li>
+		{/eq}
+	{/volist}
+     </ul>
+     <div class="navbar-hotcard">
+      <strong>热门回收：</strong>
+	{volist name="cardModel" id="k"}
+	   {eq name="k.istype" value="1"}
+			{volist name="k.comments" id="h" key="ii"}
+			  {lt name="ii" value="5"}
+			  <a href="{:url('home/card/index',['id'=>$h.id])}">{$h.title}</a>
+			  {/lt}
+			{/volist}
+		{/eq}
+	{/volist}
+     
+     </div>
+    </div></li>
+   <li class="" id="navbar-buy"><a href="https://www.aixiaoka.net/help_danye/22.html" target="_blank"><i class="iconfont"></i><span>关于我们</span></a></li>
+   <li class="" id="navbar-xianxia"><a href="http://bbs.aixiaoka.net" target=“_blank”><i class="iconfont"></i><span>论坛<span></a></li> 
+ <li class="" id="navbar-xianxia"><a href="https://www.aixiaoka.net/business.html"><i class="iconfont"></i><span>线下卡回收</span></a></li> 
+   {notempty name="wx.appimg"}
+   <li class="" id="navbar-app" data-hover="dropdown"><a href="{:url('home/index/app')}"><i class="iconfont"></i><span>关注公众号</span></a>
+    <div class="dropdown-menu animated zoomIn">
+     <div class="navbar-download"> 
+      <h5>手机回收方便快捷</h5> 
+      <img src="{$wx.appimg}" alt="" /> 
+      <p>扫码关注</p>
+     </div>
+    </div></li>
+	{/notempty}
+  </ul>
+     </div>
+     {include file="layout/to" /}
+    </div>
+   </div>
+  </div>
+ {block name="content"}内容视图{/block}
+  <div class="footer" id="footer">
+   <div class="footer-primary">
+    <div class="container">
+     <dl class="footer-help">
+      <dt>
+       回收指南
+      </dt>
+      <dd>
+       <ul class="footer-links clearfix">
+	   <li><a href="{:url('home/helpfaq/index')}" target="_blank">&middot; 平台公告</a></li>
+	   {volist name="thisli" id="p"}
+        <li><a href="{:url('home/Helpfaq/danye',['id'=>$p.id])}" target="_blank">&middot; {$p.title}</a></li>
+		{/volist}
+       </ul>
+      </dd>
+     </dl>
+     <dl class="footer-service">
+      <dt>
+       联系客服
+      </dt>
+      <dd>
+       <p class="call"><strong class="text-red">4000-518-288</strong><small>（电话客服 在线时间8:00-23:00）</small></p>
+       <div class="online">
+           <a class="btn btn-primary"  href="tencent://message/?uin={$C.qq}&Site=Sambow&Menu=yes" ><i class="iconfont iconfont-service "></i><span class="iconfont-text">QQ在线咨询</span></a>
+       <!-- <a class="btn btn-primary" href="javascript:;" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');" rel="external nofollow"> <i class="iconfont"></i>在线客服咨询</a>-->
+       </div>
+       <p class="time">客服时间： 周一至周日 08:00-23:00  邮箱： one@aixiaoka.net </p>
+      </dd>
+      <dd class="tips">
+       <div class="alert alert-alt alert-danger">
+        <s></s>
+        <h4>爱销卡友情提示</h4>
+        <p>注册即视为同意爱销卡服务协议，非法渠道获取的卡不受保护。如果您通过非官方客服号码进行咨询或处理二手卡回收造成损失，本平台概不负责。</p>
+       </div>
+      </dd>
+     </dl>
+     <dl class="footer-qrcode"> 
+      <dd>
+       <ul class="clearfix">
+	   {notempty name="wx.appimg"}
+        <li><img src="{$wx.appimg}" /><h5>关注微信公众号</h5></li>
+		{/notempty}
+		{notempty name="C.wxewm"}
+        <li><img src="{$C.wxewm}" /><h5>扫码添加微信客服</h5></li>
+		{/notempty}
+       </ul>
+      </dd>
+     </dl>
+    </div>
+   </div>
+   <div class="footer-about">
+    <div class="container">
+     <ul class="clearfix" style="text-align:center;margin-top:20px">
+	  <li style="margin:0 8px;float:left;border: 1px solid #ccc;padding: 2px 8px;"><span>友情链接</span></li>
+	 {volist name=":get_link(5,'desc')" id="p"}
+      <li style="margin:0 8px;float:left;padding: 2px 8px;"><a href="{$p.url}" target="{$p.target}" rel="nofollow"><span>{$p.name}</span></a></li>
+	  {/volist}
+     </ul>
+  
+    </div>
+   </div>
+   <div class="footer-about">
+    <div class="container">
+     <ul class="authentication clearfix">
+	 {volist name=":get_link(6,'desc')" id="p"}
+      <li><a href="{$p.url}" target="{$p.target}" rel="nofollow"><i class="iconimg"><img style="display: block;
+    height: 100%;" src="{$p.image}"></i><span>{:htmlspecialchars_decode($p.name)}</span></a></li>
+     {/volist}
+     </ul>
+     <div class="copyright">
+      <p>{$C['copyright']}<span class="sep">|</span><a href="/" target="_blank">{$C['sitename']}</a></p>
+      <p><a href="http%3A%2F%2Fwww.miitbeian.gov.cn%2F" target="_blank" rel="nofollow">ICP证：{$C['beian']}</a>{:htmlspecialchars_decode($C['buchong'])}</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <dl class="toolbar" id="toolbar">
+   <dt data-hover="dropdown">
+       <a href="tencent://message/?uin={$C.qq}&Site=QQ交谈&Menu=yes" ><i class="iconfont iconfont-service "></i><span class="iconfont-text">QQ在线咨询</span></a>
+
+    <!--<a href="javascript:;" id="zhiCustomBtn" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');"><i class="iconfont iconfont-service "></i><span class="iconfont-text">在线咨询</span></a>-->
+    <div class="dropdown-menu dropdown-menu-call animated fadeInRight">
+     <h5>您也可以拨打客服电话：</h5>
+     <p class="text-red h2">4000-518-288</p>
+     <p class="text-light h6">（08:00-23:00）</p>
+    </div>
+   </dt>
+   <dd data-hover="dropdown" class="hidden">
+    <a href="javascript:;"><i class="iconfont iconfont-call"></i><span class="iconfont-text">客服<br />电话</span></a>
+    <div class="dropdown-menu dropdown-menu-call animated fadeInRight">
+     <h5>平台客服咨询电话：</h5>
+     <p class="text-red h2">4000-518-288</p>
+     <p class="text-light h6">（08:00-23:00）</p>
+    </div>
+   </dd>
+   {notempty name="C.wxewm"}
+   <dd data-hover="dropdown">
+    <a href="javascript:;"><i class="iconfont iconfont-weixin"></i><span class="iconfont-text">关注<br/>微信</span></a>
+    <div class="dropdown-menu dropdown-menu-weixin animated fadeInRight">
+     <img src="https://www.aixiaoka.net/uploads/20201029/bc443a9bc0b7fce83a04d1995b7bb65e.png" alt="爱销卡卡密回收" />
+     <p class="text-light h6">扫码关注微信公众号</p>
+    </div>
+   </dd>
+   {/notempty}
+   <dd>
+    <a href="{:url('home/Index/feedback')}" target="_blank"><i class="iconfont iconfont-feedback"></i><span class="iconfont-text">建议<br />反馈</span></a>
+   </dd>
+   <dd id="totop">
+    <a href="#top"><i class="iconfont iconfont-top"></i><span class="iconfont-text">回到<br />顶部</span></a>
+   </dd>
+  </dl>
+  <script>
+  {:htmlspecialchars_decode($C['tongji'])}
+  </script>
+ </body>
+</html>

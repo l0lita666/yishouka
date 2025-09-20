@@ -1,0 +1,162 @@
+{extend name="iframe" /}
+{block name="body"}
+       <div class="layui-fluid">
+            <div class="layui-row">
+                <form class="layui-form">
+                      <div class="layui-form">
+							  <table class="layui-table">
+								<colgroup>
+								   <col width="110">
+								  <col width="170">
+								  <col width="110">
+								  <col width="180">
+								  <col width="130">
+								  <col >
+								 <col >
+								</colgroup>
+								<tbody>
+								  <tr>
+									<td>订单号</td>
+									<td>{$res.orderno}</td>
+									<td>运营商</td>
+									<td colspan=3>{$res.classa}</td>
+								  </tr>
+								  <tr>
+									<td>卡号</td>
+									<td>{$res.card_no}</td>
+									<td>密码</td>
+									<td>{$res.card_key|default='--'}</td>
+									<td>验证码/CVV2码</td>
+									<td>{$res.seccode|default='--'}</td>
+								  </tr>
+								  <tr>
+									<td>提交面额</td>
+									<td>{$res.money}</td>
+									<td>实际面额</td>
+									<td colspan=3><div class="layui-input-inline"><input name="settle_amt" type="text" class="layui-input" style="width:150px" {eq name="$res->getData('state')" value="2"}disabled="disabled"{/eq} value="{$res.settle_amt}"></div><div class="layui-input-inline" style="margin-left:8px"><div class="text-danger">可以手动输入实际面值</div></div></td>
+								  </tr>
+								  <tr>
+									<td>用户金额</td>
+									<td>{$res.amount}</td>
+									<td>系统金额</td>
+									<td colspan=3><div class="layui-input-inline"><input {eq name="$res->getData('state')" value="2"}disabled="disabled"{/eq} name="xitmoney" type="text" class="layui-input" style="width:150px" value="{$res.xitmoney}"></div><div class="layui-input-inline" style="margin-left:8px"><div class="text-danger">可以手动输入本单结算价</div></div></td>
+								  </tr>
+								  <tr>
+									<td>卡状态</td>
+									<td>{$res.state|raw}</td>
+									<td>错误详情</td>
+									<td colspan=3>{$res.remarks}</td>
+								  </tr>
+								  <tr>
+									<td>提交时间</td>
+									<td>{$res.create_time}</td>
+									<td>处理时间</td>
+									<td colspan=3>{$res.update_time} </td>
+								  </tr>
+								  <tr>
+									<td>提交IP</td>
+									<td>{$res.ip}</td>
+									<td>渠道</td>
+									<td colspan=3>{$res.atype} </td>
+								  </tr>
+								  
+								  <tr>
+                                   <td>成功渠道</td>
+								   <td><select name="ChannelType" id="ChannelType" data-am-selected="{dropUp: 1}">
+								                 <option value="0" >无此渠道</option>
+								                {volist name="op" id="h"}
+												  <option value="{$h.id}" {eq name="$h['id']" value="$res['type']"}selected="selected"{/eq}>{$h.name}</option>
+												{/volist}
+												</select>
+								  </td>
+                                <td class="am-text-left">
+                                    操作
+                                </td>
+
+                                <td colspan=3>
+								<div class="layui-inline" style="margin-bottom: 8px;">
+								  <div class="layui-input-inline">
+									<input type="hidden" id="textid" value="{$res.id}"><input id="ContentPlaceHolder1_txtRealMoney" type="text" value="{$res.money}" {if $res->getData('state')==2 or !is_numeric($res.money)}disabled="disabled"{/if} class="layui-input" placeholder="成功面额" style="width:150px;    float: left;" />
+								  </div>
+								  <div class="layui-input-inline">
+									<button class="layui-btn {if $res->getData('state')==2}layui-btn-disabled"{/if}" lay-filter="sok" lay-submit="">成功</button>
+								  </div>
+								</div>
+								<div class="layui-inline">
+								  <div class="layui-input-inline">
+									<input id="ContentPlaceHolder1_txtErrinfo" name="txtErrinfo" style="width:150px;    float: left;"  type="text"  {eq name="$res->getData('state')" value="3"}disabled="disabled"{/eq} class="layui-input" placeholder="错误详情" />
+								  </div>
+								  <div class="layui-input-inline">
+									<button class="layui-btn {eq name="$res->getData('state')" value="3"}layui-btn-disabled"{/eq}" lay-filter="sno" lay-submit="">失败</button>    
+								  </div>
+								</div>                                    
+                                </td>
+                                
+                            </tr>
+								</tbody>
+							  </table>
+							</div>
+                </form>
+            </div>
+        </div>
+			{/block}
+			{block name="js"}
+			<script>
+		layui.use(['form', 'layer'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+                //监听提交
+                form.on('submit(sok)',
+                   function(data) {
+				        var id=$("#textid").val();
+				        var t=$("#ChannelType").val();
+				        var m=$("#ContentPlaceHolder1_txtRealMoney").val();
+				        var mianzi=$("input[name=settle_amt]").val();
+				        var xitmoney=$("input[name=xitmoney]").val();
+						layer.confirm('您确定要订单赔付吗？', function(index){
+								var loading =layer.load(3, {shade: [0.1,'#fff']});
+								$.post("{:url('/Apiorder/setStatus')}",{id:id,op:t,amt:m,type:'peifuok',mianzi:mianzi,xitmoney:xitmoney},function(res){
+										layer.close(loading);
+										if(res.code==1){
+											layer.alert(res.msg,{icon:1},function(index){
+												 layer.close();
+												 window.parent.location.reload();
+												 layer.closeAll();
+											});
+								        }else{
+										layer.alert(res.msg,{icon:2});
+										}
+										
+								})
+							})
+						return false;
+                  
+                });
+				form.on('submit(sno)',
+                   function(data) {
+				        var id=$("#textid").val();
+						var t=$("#ChannelType").val();
+				        var e=$("#ContentPlaceHolder1_txtErrinfo").val();
+						layer.confirm('您确定要订单赔付吗？', function(index){
+								var loading =layer.load(3, {shade: [0.1,'#fff']});
+								$.post("{:url('/Apiorder/setStatus')}",{id:id,op:t,str:e,type:'peifuerr'},function(res){
+										layer.close(loading);
+										if(res.code==1){
+											layer.alert(res.msg,{icon:1},function(index){
+												 layer.close();
+												 window.parent.location.reload();
+												 layer.closeAll();
+											});
+										}else{
+											layer.alert(res.msg,{icon:2});
+										}
+								})
+							})
+						return false;
+                  
+                });
+
+            });</script>
+				{/block}

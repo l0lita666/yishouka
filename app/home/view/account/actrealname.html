@@ -1,0 +1,158 @@
+ {extend name="layout/member" /} 
+ {block name="content"}
+<div class="view-framework-main">
+    {include file="layout/info_menu" /}
+    <div class="box tab-content realname-content">
+        <div class="alert alert-icon alert-warning hidden">
+            <div class="icon">
+                <i class="iconfont">&#xe61c;</i></div>
+            <div class="text">
+                <h4>您还未进行实名身份认证，请填写以下信息进行认证。</h4>
+                <p>实名认证：是由{$C.sitename}提供的一项身份识别服务，只有实名认证之后才可进行余额提现操作。</p>
+            </div>
+        </div>
+        <form id="uploadImage" method="post" action=''>
+            <div class="userform userform-narrow">
+                <div class="form-group mb20">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="form-element">
+                        <ul class="btn-group btn-group-long clearfix" id="realname-group">
+                           {eq name="isapi" value="1"} <li>
+                                <a class="btn" href="{:url('home/Account/index')}">
+                                    <i class="iconfont iconfont-alipay">&#xe637;</i>使用支付宝实名认证(自动)</a>
+                            </li>
+                            <li class="divider">
+                                <span class="text-light">或</span></li>{/eq}
+                            <li class="active">
+                                <a class="btn" href="{:url('home/Account/actrealname')}">
+                                    <i class="iconfont iconfont-identity">&#xe674;</i>上传身份证实名认证(人工)</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                    <em>*</em>真实姓名：</label>
+                    <div class="form-element">
+                        <input type="text" class="form-control form-control-short" id="username" name="username" value="{$da.name|default=''}" null="请输入真实姓名" reg="[\u4e00-\u9fa5]{2,10}">
+                        <div class="form-tips">
+                            <p>请输入与身份证一致的真实姓名</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="idcard">
+                    <em>*</em>身份证号码：</label>
+                    <div class="form-element">
+                        <input type="text" class="form-control" id="idcard" name="idcard" value="{$da.idcard|default=''}" null="请输入正确的身份证号码" reg="^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$"></div>
+                </div>
+                <div class="realname-tabs">
+                    <div class="form-group">
+                        <label class="form-label">
+                      <em>*</em>证件图片：</label>
+                        <div class="form-element">
+                            <p class="text-light">照片支持jpg、gif、bmp、png格式，图片最大不要超过5M。</p>
+                            <div class="realname-panel clearfix">
+                                <dl class="realname-info">
+                                    <dt>
+                            <p class="text-dark">身份证正面照</p>
+                            <p>需要能看清姓名、身份证号码等信息。</p>
+                          </dt>
+                                    <dd>
+                                        <div class="realname-preview" id="preview_0">{empty name="$da.positive_img|default=''"}暂无图片{else/}<img src="{$da.positive_img}">{/empty}</div>
+                                        <div class="btn btn-green realname-uploadfile" id="uploadfile_0"></div>
+                                        <div class="realname-status hide" id="status_0">
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-success"></div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="idjust" id="idjus" value="{$da.positive_img|default=''}">
+                                    </dd>
+                                    <dd>
+                                        <div class="realname-preview" data-tip='<img width="350" src="__IMG__/idcard0.jpg"><p class="text-center">身份证正面照需要能看清姓名、身份证号码等信息。</p>|bottom-left'>
+                                            <img src="__IMG__/sprites/identity-front.png" alt=""></div>
+                                        <p>示例</p>
+                                    </dd>
+                                </dl>
+                                <dl class="realname-info">
+                                    <dt>
+                            <p class="text-dark">身份证反面照</p>
+                            <p>需要看清签发机关、有效期限等信息。</p>
+                          </dt>
+                                    <dd>
+                                        <div class="realname-preview" id="preview_1">{empty name="$da.back_img"}暂无图片{else/}<img src="{$da.back_img}">{/empty}</div>
+                                        <div class="btn btn-green realname-uploadfile" id="uploadfile_1"></div>
+                                        <div class="realname-status hide" id="status_1">
+
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-success"></div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="idback" id="idback" value="{$da.back_img|default=''}">
+                                    </dd>
+                                    <dd>
+                                        <div class="realname-preview" data-tip='<img width="350" src="__IMG__/idcard1.jpg"><p class="text-center">身份证反面照需要看清签发机关、有效期限等信息。</p>|bottom-right'>
+                                            <img src="__IMG__/sprites/identity-back.png" alt=""></div>
+                                        <p>示例</p>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                      <em>*</em>身份照片：</label>
+                        <div class="form-element">
+                            <p class="text-light">照片支持jpg、gif、bmp、png格式，图片最大不要超过5M。</p>
+                            <div class="realname-panel realname-panel-inhand clearfix">
+                                <dl class="realname-info">
+                                    <dt>
+                            <p class="text-red">
+                              <strong>请用双手</strong>手持身份证正面头部照</p></dt>
+                                    <dd>
+                                        <div class="realname-preview" id="preview_2">{empty name="$da.hand_img"}暂无图片{else/}<img src="{$da.hand_img}">{/empty}</div>
+                                        <div class="btn btn-green realname-uploadfile" id="uploadfile_2"></div>
+                                        <div class="realname-status hide" id="status_2">
+
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-success"></div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="license" id="idjus" value="{$da.hand_img|default=''}">
+                                    </dd>
+                                    <dd>
+                                        <div class="realname-preview" data-tip='<img height="360" src="__IMG__/idcard2.jpg" alt=""><p class="text-center">请确保“身份证”相关信息全部清晰。<p>|right'>
+                                            <img src="__IMG__/sprites/identity-hand.png" alt=""></div>
+                                        <p>示例</p>
+                                    </dd>
+                                </dl>
+                                <dl class="realname-info">
+                                    <dd>
+                                        <ul class="list list-decimal">
+                                            <li>照片内所持身份证必须在有效期内，没有作假痕迹；</li>
+                                            <li>照片内所持身份证正面，信息清晰可见，无遮挡；</li>
+                                            <li>照片内持证人五官清晰可见，且五官必须与身份证上照片一致；</li>
+                                            <li>还必须与实名认证的各项身份信息一致，包括真实姓名、身份证号等。</li>
+                                        </ul>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="help-block">
+                                <p>您的照片信息仅在审核时作为{$C.sitename}实名认证依据，我们不会保留原始图片及泄露用户任何隐私！</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group-btn pt15">
+					     {:token_field()}
+                        <input class="btn btn-primary" id="anjian" type="button" data-form="top-left,json" name="uploadImage" value="确认，提交上传" /></div>
+                </div>
+            </div>
+        </form>
+        <script>
+            var url = "{:url('home/Account/uploadImage')}";
+        </script>
+        <script src="__JS__/webuploader.min.js"></script>
+        <script src="__JS__/jquery.img.js?v=103"></script>
+    </div>
+</div>
+{/block}
