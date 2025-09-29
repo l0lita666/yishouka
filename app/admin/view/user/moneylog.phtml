@@ -1,0 +1,35 @@
+{extend name="base" /}
+{block name="body"}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-btn-group">
+            <a href="{:url('/user/moneylog',['id'=>$id])}" class="layui-btn layui-btn-danger ajax-delete"><i class="fa fa-trash-o"></i> 一键清空</a>
+        </div>
+        <table class="layui-table layui-form">
+            <thead>
+                <tr>
+                    <th>操作时间</th>
+                    <th>操作类型</th>
+                    <th>变动金额</th>
+                    <th>变动前余额</th>
+					<th>关联订单</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach name="list" item="v" empty="$empty"}
+                <tr>
+                    <td>{$v.addtime}</td>
+                    <td>{:moneyType($v['type'])}</td>
+                    <td>{$v.price}</td>
+                    <td>{$v.money}</td>
+					<td>{$v.orderno|default="--"}</td>
+                    <td>{$v.data|default="--"}</td>
+                </tr>
+                {/foreach}
+            </tbody>
+        </table>
+        <div class="page">{$list|raw}</div>
+    </div>
+</div>
+{/block}

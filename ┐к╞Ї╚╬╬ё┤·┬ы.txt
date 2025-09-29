@@ -1,0 +1,6 @@
+php think queue:listen --queue ipJobQueue &
+php think queue:listen --queue Jobtixian &
+php think queue:listen --queue sendCardUrgentJobQueue &
+php think queue:listen --queue sendPostJobQueue &
+php think queue:listen --queue sendCardJobQueue &
+php think queue:listen --queue apiJobQueue &

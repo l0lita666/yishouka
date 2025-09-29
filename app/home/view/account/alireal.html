@@ -1,0 +1,64 @@
+ {extend name="layout/member" /} 
+ {block name="content"}
+<div class="view-framework-main">
+    {include file="layout/info_menu" /}
+    <div class="box tab-content realname-content">
+        <div class="alert alert-icon alert-warning hidden">
+            <div class="icon">
+                <i class="iconfont">&#xe61c;</i></div>
+            <div class="text">
+                <h4>您还未进行实名身份认证，请填写以下信息进行认证。</h4>
+                <p>实名认证：是由{$C.sitename}提供的一项身份识别服务，只有实名认证之后才可进行余额提现操作。</p>
+            </div>
+        </div>
+        <form id="uploadImage" method="post" action='{:request()->url()}'>
+            <div class="userform userform-narrow">
+                <div class="form-group mb20">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="form-element">
+                        <ul class="btn-group btn-group-long clearfix" id="realname-group">
+                             {eq name="isapi" value="1"}
+                            <li class="active">
+                                <a class="btn" href="{:url('home/Account/index')}">
+                                    <i class="iconfont iconfont-alipay">&#xe637;</i>使用支付宝实名认证(自动)</a>
+                            </li>
+                            
+                            <li class="divider">
+                                <span class="text-light">或</span></li>{/eq}
+                            <li>
+                                <a class="btn" href="{:url('home/Account/actrealname')}">
+                                    <i class="iconfont iconfont-identity">&#xe674;</i>上传身份证实名认证(人工)</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                    <em>*</em>真实姓名：</label>
+                    <div class="form-element">
+                        <input type="text" class="form-control form-control-short" id="username" name="username" value="" null="请输入真实姓名" reg="[\u4e00-\u9fa5]{2,10}">
+                        <div class="form-tips">
+                            <p>请输入与身份证一致的真实姓名</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="idcard">
+                    <em>*</em>身份证号码：</label>
+                    <div class="form-element">
+                        <input type="text" class="form-control" id="idcard" name="idcard" value="" null="请输入正确的身份证号码" reg="^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$">
+                        <div class="help-block">
+                            <p>请输入与您支付宝一致的姓名和身份证号</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="realname-tabs">
+                    <div class="form-group-btn pt10 clearfix">
+					    {:token_field()}
+                        <input class="btn btn-green make-alipay pull-left" type="button" id="anjian" data-form="top-left,json" name="uploadImage" value="开始认证" /></div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}

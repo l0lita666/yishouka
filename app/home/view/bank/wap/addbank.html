@@ -1,0 +1,38 @@
+<div class="form-primary">
+	<form action="{:url('home/bank/addbank')}" method="post" id="submit">
+		<div class="alert alert-alt alert-warning text-center">
+		{eq name="$user.userReal.retype" value="1"}
+		 只能添加<strong>【{$user.userReal.name}】</strong>的银行卡账号
+		{else/}
+			只能添加<strong>【{$user.userReal.company_name}】</strong>的银行卡账号
+		{/eq}
+			
+		</div>
+		<div class="form-group">
+			<div class="list-arrow">
+				<select class="form-control" name="tobank">
+				{volist name="banks" id="p"}
+					<option value="{$p.id}" {eq name="$p.id" value="$res.bankid"}selected = selected{/eq}>{$p.bankName}</option>
+					{/volist}
+				</select>
+				<div class="select-arrow">
+					开户银行
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<input class="form-control" name="accounts" id="accounts" type="number" value="{$res.accounts|default=''}" reg="^[0-9]{12,20}$" null="请输入正确的银行卡卡号" err="银行卡格式不正确" placeholder="请输入银行卡卡号">
+		</div>
+		{empty name="$res.accounts"}
+		<div class="form-group">
+			<input class="form-control" id="verifyacc" name="verifyacc" type="number" value="" reg="^[0-9]{12,20}$" null="请再次填写银行卡卡号" err="银行卡格式不正确" placeholder="确认银行卡卡号">
+		</div>
+		{/empty}
+		<div class="form-group">
+		    {:token_field()}
+			<button class="btn btn-primary" type="button" data-form="top-left,json" name="submit">确认，提交</button>
+			{notempty name="$res.id"}
+			<button class="btn btn-link text-red" type="button" data-dialog="{:url('home/Bank/del',['id'=>$res.id])},350">删除</button>{/notempty}
+		</div>
+	</form>
+</div>

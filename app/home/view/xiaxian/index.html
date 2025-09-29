@@ -1,0 +1,126 @@
+{extend name="layout/index" /} 
+{block name="content"}
+  <link href="__CSS__/sup/base.css?2020522" rel="stylesheet" />
+  <div class="content">
+   <div class="xianxia-jumbotron">
+    <div class="container">
+     <div class="xianxia-masthead">
+      <h2 class="hide">卡卡礼品网线下回收</h2>
+      <h3 class="hide">更安全，更省心，更满意</h3>
+     </div>
+     <div class="xianxia-city dropdown" data-cityurl="/xianxia.html">
+      <a class="btn" href="javascript:;" onclick="getProvincelist(this);"><span class="icon"><i class="iconfont iconfont-address"></i></span><span class="city">您的城市：</span><span class="your" id="yourLocation">选择交易城市</span><span class="change">切换城市</span></a>
+      <div class="dropdown-menu">
+       <div class="dropdown-arrow"></div>
+       <div class="city-picker">
+        <div class="city-picker-close modal-close" onclick="closeCity();"></div>
+        <div class="city-picker-tab">
+         <a class="active" id="tabProvince" href="javascript:;" onclick="cityTab(this,'#provinceList');">选择省份</a>
+         <a href="javascript:;" id="tabCity" onclick="cityTab(this,'#cityList');">选择城市</a>
+        </div>
+        <div class="city-picker-content">
+         <div class="city-picker-item" id="provinceList"></div>
+         <div class="city-picker-item hide" id="cityList"></div>
+        </div>
+       </div>
+      </div>
+      <script type="text/template" id="template_provincelist"><a href="javascript:;" onclick="getCity(1);">123</a></script>
+      <script type="text/template" id="template_citylist"><a href="javascript:;" onclick="setProvincelist(5)">info.name</a></script>
+     </div>
+    </div>
+   </div> 
+   <div class="panel xianxia-stepflow">
+    <div class="container"> 
+     <ul class="xianxia-step">
+      <li>
+       <div class="iconimg iconimg-1"></div>
+       <div class="title">
+        选择交易方式
+       </div>
+       <div class="num dinfont">
+        01
+       </div></li>
+      <li class="dot"><i></i></li>
+      <li>
+       <div class="iconimg iconimg-2"></div>
+       <div class="title">
+        提交联系方式
+       </div>
+       <div class="num dinfont">
+        02
+       </div></li>
+      <li class="dot"><i></i></li>
+      <li>
+       <div class="iconimg iconimg-3"></div>
+       <div class="title">
+        等待商户联系
+       </div>
+       <div class="num dinfont">
+        03
+       </div></li>
+      <li class="dot"><i></i></li>
+      <li>
+       <div class="iconimg iconimg-4"></div>
+       <div class="title">
+        进行线下交易
+       </div>
+       <div class="num dinfont">
+        04
+       </div></li>
+     </ul>
+    </div> 
+   </div> 
+   <div class="panel panel-bggray">
+    <div class="container"> 
+     <div class="panel-heading">
+      <h2 class="panel-title">热门线下卡回收</h2>
+      <div class="panel-subtitle">
+       <p>如回收列表里面没有您想要出售的卡，可以联系在线客服咨询</p>
+      </div>
+     </div>
+     <div class="panel-body">
+      <div class="cards-group cards-group-xianxia owl-carousel clearfix" id="cardHot">
+       <li class="item" style="width: 940px;">
+        <div class="cards-cover">
+         <span class="h4 text-light">您所在的城市，暂无热门卡券</span>
+        </div></li>
+      </div>
+      <script type="text/template" id="template_cardhot"><div class="item"><div class="cards-cover"> <a href="/store/detail/2"><img src="//www.lipin.com/template/static/images/cards/new/2.png" alt=""></a><h5 class="title">在下合</h5><div class="actions"><a class="btn btn-sm btn-default" href="/store/detail?id=1">我有卡要回收</a></div></div></div></script>
+     </div>
+    </div>
+   </div>
+   <div class="panel">
+    <div class="container"> 
+     <div class="panel-heading">
+      <h2 class="panel-title">线下卡回收列表</h2>
+      <div class="panel-subtitle">
+       <p><a id="tab1" class="active" onclick="getCard(this,6);" href="javascript:;">商场购物卡</a><span class="sep">|</span><a id="tab2" onclick="getCard(this,2);" href="javascript:;">话费充值卡</a><span class="sep">|</span><a id="tab3" onclick="getCard(this,3);" href="javascript:;">加油充值卡</a><span class="sep">|</span><a id="tab4" onclick="getCard(this,1);" href="javascript:;">游戏点卡</a></p>
+      </div>
+     </div>
+     <div class="panel-body">
+      <ul class="xianxia-group clearfix" id="cardlist">
+       <li class="none"><p>很抱歉，您所在的城市，暂无此类卡线下回收服务</p><p>您可以联系在线客服进行邮寄或者在线提交卡密进行交易</p></li>
+      </ul>
+      <script type="text/template" id="template_cardlist"><li><a href="/store/detail/1"><img src="//www.lipin.com/template/static/images/cards/new/1.png" alt=""><span class="title">在哪</span></a></li></script> 
+     </div> 
+    </div>
+   </div>
+   <div class="panel xianxia-join">
+    <div class="container">
+     <div class="panel-heading">
+      <h3 class="panel-title">招商加盟 &middot; 城市代理</h3>
+      <div class="panel-subtitle">
+       <p class="h3">火<span class="sep">&middot;</span>热<span class="sep">&middot;</span>招<span class="sep">&middot;</span>商<span class="sep">&middot;</span>中</p>
+      </div>
+     </div>
+     <div class="panel-body">
+      <a href="http://www.lipin.com/store/investment"><img class="img-response" src="__IMG__/sprites/jion.png" /></a>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script src="__JS__/doT.js"></script>
+  <script src="__JS__/store.js?2020"></script>
+  <script type="text/javascript" src="__JS__/owl.carousel.min.js"></script>
+  <script>getHotCard();getCard($('#tab1'),6);</script>
+  {/block}
