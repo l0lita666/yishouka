@@ -23,7 +23,7 @@ return [
 								</a>
 							</td>
                             <td width="380" align="right" style="padding-right: 20px; font-size: 15px;">
-                               	<a style=" text-decoration: none; font-size:15px; margin-right: 20px;" href="https://www.aixiaoka.net/" target="_blank" rel="noopener">爱销卡首页</a>
+                               	<a style=" text-decoration: none; font-size:15px; margin-right: 20px;" href="https://www.aixiaoka.net/" target="_blank" rel="noopener">易收卡首页</a>
                                 <a style="text-decoration: none; font-size:15px;" href="https://www.aixiaoka.net" target="_blank" rel="noopener">安全快捷 实时提现</a>
 							</td>
                         </tr>
@@ -39,7 +39,7 @@ return [
 					<tbody>
 						<tr>
 							<td style="background-color:#fff;text-align:left;padding-bottom: 25px;">
-								<p style="font-size: 15px; margin: 10px 0; color:#333;font-weight:bold; ">亲爱的的爱销卡用户：</p>
+								<p style="font-size: 15px; margin: 10px 0; color:#333;font-weight:bold; ">亲爱的的易收卡用户：</p>
 								<p style="font-size: 14px; margin: 10px 0; color: #666;">您正在进行邮箱操作，您的验证码为：</p>
 								<p style="font-size: 24px; margin: 0; color: #000; text-align: center; ">{code}</p>
 								<p style="font-size: 14px; margin: 10px 0; color: #666;">此邮件内容5分钟内有效，请及时输入。</p>
@@ -48,10 +48,10 @@ return [
 						<tr>
 							<td style="border-top: 1px solid #eee; padding-top: 25px;">
 								<p style="font-size:12px;color:#666; line-height: 1.5;">
-									您之所以收到这封邮件，是因为您已经是爱销卡的用户；<br>
+									您之所以收到这封邮件，是因为您已经是易收卡的用户；<br>
 									我们不会以系统维护，订单异常等为由，要求您点击链接或其他方式进行退款操作或提供个人信息；<br>
 									在回收中遇到任何问题，请点击 <a href="https://www.aixiaoka.net/home/help_index.html" target="_blank" rel="noopener"> 联系我们</a> 联系客服咨询；<br>
-									更多请查看<a target="_blank" style="font-size:12px;color:#06c;" href="https://www.aixiaoka.net/home/help_index.html" rel="noopener">爱销卡帮助中心</a>，我们给您提供了多种渠道，方便您解决问题。
+									更多请查看<a target="_blank" style="font-size:12px;color:#06c;" href="https://www.aixiaoka.net/home/help_index.html" rel="noopener">易收卡帮助中心</a>，我们给您提供了多种渠道，方便您解决问题。
 								</p>
 							</td>
 						</tr>
