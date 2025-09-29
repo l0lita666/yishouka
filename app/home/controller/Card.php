@@ -27,8 +27,6 @@ class Card extends IndexBase
 			$cid=CardList::where(['id'=>$da['id']])->value('cid');
 		}
 		$res=CardModel::where(['id'=>$cid])->find();
-		var_dump($res);
-		die();
 		View::assign("cid",$cid);
 		View::assign("tid",isset($da['id'])?$da['id']:$id);
 		View::assign("ress",$res);

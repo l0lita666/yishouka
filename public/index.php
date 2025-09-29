@@ -13,7 +13,7 @@
 namespace think;
 
 
-// header('Content-Type: text/html; charset=UTF-8');
+header('Content-Type: text/html; charset=UTF-8');
 // header("Cache-Control: no-store, no-cache");
 // include 'txprotect.php';
 function inject_checks($sql_str)

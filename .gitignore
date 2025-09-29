@@ -3,3 +3,19 @@
 /vendor
 *.log
 .env
+
+# ThinkPHP runtime files
+/runtime/
+/temp/
+/cache/
+
+# Session files
+/session/
+
+# Upload files (if not needed in version control)
+/uploads/
+
+# Config files with sensitive data
+/config/database.php
+/config/cache.php
+/config/session.php
