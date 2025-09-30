@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人脸认证测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        #preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>人脸认证测试</h1>
+    
+    <form id="authForm">
+        <div class="form-group">
+            <label for="name">姓名：</label>
+            <input type="text" id="name" name="name" value="张三" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="idcard">身份证号：</label>
+            <input type="text" id="idcard" name="idcard" placeholder="请输入身份证号" required>
+        </div>
+        
+        <button type="submit">开始认证</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        // 图片预览
+        document.getElementById('faceImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 获取MetaInfo
+        function getMetaInfo() {
+            if (typeof window.getMetaInfo === 'function') {
+                return window.getMetaInfo();
+            } else {
+                // 如果没有getMetaInfo函数，返回一个基本的MetaInfo
+                return JSON.stringify({
+                    "bioMetaInfo": "4.1.0:2916352,0",
+                    "deviceType": "h5",
+                    "ua": navigator.userAgent
+                });
+            }
+        }
+
+        // 将图片转换为Base64
+        function imageToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // 移除data:image/jpeg;base64,前缀
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 表单提交
+        document.getElementById('authForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const idcard = document.getElementById('idcard').value;
+            const faceImage = document.getElementById('faceImage').files[0];
+            
+            if (!faceImage) {
+                showResult('请选择人脸图片', 'error');
+                return;
+            }
+            
+            try {
+                // 获取MetaInfo
+                const metaInfo = getMetaInfo();
+                
+                // 转换图片为Base64
+                const faceImageBase64 = await imageToBase64(faceImage);
+                
+                // 构建请求数据
+                const requestData = {
+                    metaInfo: metaInfo,
+                    name: name,
+                    faceImageBase64: faceImageBase64
+                };
+                
+                if (idcard) {
+                    requestData.idcard = idcard;
+                }
+                
+                showResult('正在发起认证请求...', 'info');
+                
+                // 发送请求
+                const response = await fetch('https://www.ssyd.fun/faceauth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.code === 0 && data.resultObject && data.resultObject.certifyUrl) {
+                    showResult('获取认证链接成功！即将跳转到认证页面...', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.resultObject.certifyUrl;
+                    }, 2000);
+                } else {
+                    showResult('认证失败: ' + (data.msg || JSON.stringify(data)), 'error');
+                }
+                
+            } catch (error) {
+                showResult('请求失败: ' + error.message, 'error');
+            }
+        });
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = type;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+    
+    <!-- 引入阿里云MetaInfo获取脚本 -->
+    <script type="text/javascript" src="https://o.alicdn.com/yd-cloudauth/cloudauth-cdn/jsvm_all.js"></script>
+</body>
+</html>

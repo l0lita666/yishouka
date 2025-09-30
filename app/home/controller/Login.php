@@ -107,7 +107,6 @@ class Login extends IndexBase
 			$map['username']=$param['username'];
 			$map['password']=$param['newpsw'];
 			$map['mobile']=$param['phoneno'];
-			$map['qq']=$param['qq'];
 			$map['assets']=cookie('referee');
 			(new User)->save($map);
 			$ms=['confirm'=>['name'=> "注册账号成功！", 'width'=>400, 'prompt'=> "success",'time'=>1,'url'=>'/login.html'],'content'=>'请登陆....'];

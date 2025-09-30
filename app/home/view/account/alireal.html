@@ -17,17 +17,9 @@
                     <label class="form-label">&nbsp;</label>
                     <div class="form-element">
                         <ul class="btn-group btn-group-long clearfix" id="realname-group">
-                             {eq name="isapi" value="1"}
                             <li class="active">
-                                <a class="btn" href="{:url('home/Account/index')}">
-                                    <i class="iconfont iconfont-alipay">&#xe637;</i>使用支付宝实名认证(自动)</a>
-                            </li>
-                            
-                            <li class="divider">
-                                <span class="text-light">或</span></li>{/eq}
-                            <li>
-                                <a class="btn" href="{:url('home/Account/actrealname')}">
-                                    <i class="iconfont iconfont-identity">&#xe674;</i>上传身份证实名认证(人工)</a>
+                                <a class="btn" href="{:url('home/SimpleAuth/index')}">
+                                    <i class="iconfont iconfont-identity">&#xe674;</i>易收卡简易实名认证</a>
                             </li>
                         </ul>
                     </div>

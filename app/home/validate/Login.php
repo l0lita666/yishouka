@@ -38,20 +38,48 @@ class Login extends Validate
 				return json_encode(['tip'=>"#codeno", 'content'=>"验证码错误",'token'=>token()]);
 			}else{
 				$admin = User::where(['mobile' => $data['phoneno']])->find();
-				if($admin['status'] != 1){
-					return json_encode(['tip'=>"#phoneno", 'content'=>"帐号被禁用，请联系管理员"]);
+				if($admin){
+					if($admin['status'] != 1){
+						return json_encode(['tip'=>"#phoneno", 'content'=>"帐号被禁用，请联系管理员"]);
+					}else{
+						$token=makeToken();
+						$admin->token=$token;
+						$admin->timeout=strtotime("+1 days");
+						$admin->last_login_ip=$this->request->ip();
+						$auth = [
+							'user_id' => $admin['id'],
+							'shop_id' => $admin['shopid'],
+							'mobile' => $admin['mobile'],
+							'token'=>$token
+						];
+						$admin->save();
+						session('user_auth', $auth);
+						session('user_auth_sign', data_auth_sign($auth));
+						session('login'.$data['phoneno'],null);
+						return true;
+					}
 				}else{
+					// 自动注册新用户
+					$map['shopid'] = User::order('id desc')->value('shopid')+1;
+					$map['username']=$data['phoneno']; // 使用手机号作为用户名
+					$map['password']=''; // 不设置默认密码
+					$map['mobile']=$data['phoneno'];
+					$map['assets']=cookie('referee');
+					$newUser = new User;
+					$newUser->save($map);
+					
+					// 自动登录
 					$token=makeToken();
-					$admin->token=$token;
-					$admin->timeout=strtotime("+1 days");
-					$admin->last_login_ip=$this->request->ip();
+					$newUser->token=$token;
+					$newUser->timeout=strtotime("+1 days");
+					$newUser->last_login_ip=$this->request->ip();
 					$auth = [
-						'user_id' => $admin['id'],
-						'shop_id' => $admin['shopid'],
-						'mobile' => $admin['mobile'],
+						'user_id' => $newUser['id'],
+						'shop_id' => $newUser['shopid'],
+						'mobile' => $newUser['mobile'],
 						'token'=>$token
 					];
-					$admin->save();
+					$newUser->save();
 					session('user_auth', $auth);
 					session('user_auth_sign', data_auth_sign($auth));
 					session('login'.$data['phoneno'],null);

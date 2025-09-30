@@ -48,9 +48,9 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="control-label" for="qq">联系QQ：</label><input type="number" class="form-control" id="qq" name="qq" placeholder="请输入QQ号码" null="请输入qq">
+						<label class="control-label" for="qq"></label><input type="number" class="form-control" id="qq" name="qq" style="display:none;">
 						<div class="help-block">
-							<span class="onshow"><i class="iconfont"></i>填写QQ方便管理员与你的联系</span>
+							<span class="onshow"><i class="iconfont"></i></span>
 						</div>
 					</div>
 					<div class="form-group">
@@ -81,14 +81,14 @@
 					    {:token_field()}
 						<label class="control-label">&nbsp;</label><button class="btn btn-primary btn-block btn-md" type="submit" data-form="top-left,json" name="signup" id="signupbtn">同意协议并创建帐户</button>
 					</div>
-					<div class="form-group">
+					<div class="form-group" style="display:none;">
 						<label class="control-label">&nbsp;</label>
 						<div class="login-other">
 							<fieldset class="orline">
-								<legend class="orline-title" align="center">使用其他登录方式</legend>
+								<legend class="orline-title" align="center"></legend>
 							</fieldset>
-							<a class="login-other-qzone {eq name='isqq' value='0'}hidden{/eq}" href="javascript:;" target="_top" rel="nofollow" onclick="toQzoneLogin();"><i class="iconfont iconfont-qq"></i>QQ帐号直接登录</a>
-							<a class="login-other-wechat {eq name='iswx' value='0'}hidden{/eq}" href="javascript:;" target="_top" rel="nofollow" onclick="towxLogin();"><i class="iconfont iconfont-wechat"></i>微信帐号直接登录</a>
+							<a class="login-other-qzone {eq name='isqq' value='0'}hidden{/eq}" href="javascript:;" target="_top" rel="nofollow" onclick="toQzoneLogin();"><i class="iconfont iconfont-qq"></i></a>
+							<a class="login-other-wechat {eq name='iswx' value='0'}hidden{/eq}" href="javascript:;" target="_top" rel="nofollow" onclick="towxLogin();"><i class="iconfont iconfont-wechat"></i></a>
 						</div>
 					</div>
 				</form>

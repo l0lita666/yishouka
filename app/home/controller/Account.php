@@ -23,86 +23,13 @@ class Account extends UserBase
 	 }
 
     public function index(){
-        if($this->real['isapi']!=1)$this->redirect(url('home/Account/actrealname'));
-		if ($this->request->isPost()){
-		    $data=input();
-			try{
-				$this->validate($data, 'account.checkapi');
-            }catch (\Exception $e){
-				$str=$e->getMessage();
-				$res=getArr($str);
-				return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]);
-            }
-			$res=realName($data['idcard'],$data['username']);
-			if($res['status']!="01"){
-				return json(["tip"=>"#idcard","content"=>$res['msg'],'token'=>token()]);
-				exit;
-			}
-			$map['shopid']=session('user_auth.shop_id');
-			$map['name']=$data['username'];
-			$map['retype']=1;
-			$map['clas']=1;
-			$map['idcard']=$data['idcard'];
-			$find=UserAuth::where(['shopid'=>session('user_auth.shop_id')])->find();
-			if($find){
-				if($find['retype']!=4){
-					return json(["tip"=>"#anjian","content"=>"非法操作记录数据库"]);
-				    exit;
-				}else{
-				  $find->save($map);
-				}
-			}else{
-			   $ok=UserAuth::create($map);
-			}
-			return json(['confirm'=>['name'=> "实名认证成功！", 'width'=>400, 'prompt'=> "success",'time'=>1,'url'=>'/user_realname.html'],'content'=>'操作成功....']);
-		}
-		if(request()->isMobile()){
-			return view('account/wap/alireal',['title'=>"实名认证"]);
-		}else{
-		   return view('alireal');
-		}
-		
+        // 重定向到新的简易认证页面
+        $this->redirect(url('home/SimpleAuth/index'));
 	}
 	
 	public function actrealname(){
-		if ($this->request->isPost()){
-		    $data=input();
-			try{
-				$this->validate($data, 'account.checkpic');
-            }catch (\Exception $e){
-				$str=$e->getMessage();
-				$res=getArr($str);
-				return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]);
-            }
-			$map['shopid']=session('user_auth.shop_id');
-			$map['name']=$data['username'];
-			$map['retype']=3;
-			$map['hastype']=1;
-			$map['clas']=1;
-			$map['idcard']=$data['idcard'];
-			$map['positive_img']=$data['idjust'];
-			$map['back_img']=$data['idback'];
-			$map['hand_img']=$data['license'];
-			$find=UserAuth::where(['shopid'=>session('user_auth.shop_id')])->find();
-			if($find){
-				if($find['retype']!=4){
-					return json(["tip"=>"#anjian","content"=>"非法操作记录数据库"]);
-				    exit;
-				}else{
-				  $find->save($map);
-				}
-			}else{
-			  $ok=UserAuth::create($map);
-			}
-			return json(['confirm'=>['name'=> "提交认证成功！", 'width'=>400, 'prompt'=> "warning",'time'=>1,'url'=>'/user_realname.html'],'content'=>'等待认证审核...']);
-		}
-		View::assign("da",UserAuth::where(['shopid'=>$this->user['shopid']])->find());
-		if(request()->isMobile()){
-			return view('account/wap/actrealname',['title'=>"实名认证"]);
-		}else{
-		   return view();
-		}
-		
+        // 重定向到新的简易认证页面
+        $this->redirect(url('home/SimpleAuth/index'));
 	}
 	
 	//上传图片

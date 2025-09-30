@@ -48,7 +48,7 @@ class Member extends UserBase
 	
 	public function realname(){
 		if($this->user['userReal']['retype']<1 && !empty($this->user['mobile'])){
-			$this->redirect(url('home/Account/index'));
+			$this->redirect(url('home/SimpleAuth/index'));
 		}
 		if(request()->isMobile()){
 			return view('member/wap/realname',['title'=>"实名认证"]);

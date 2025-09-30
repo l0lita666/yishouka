@@ -1,0 +1,86 @@
+{extend name="layout/layout" /}
+{block name="content"}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{$title}</h3>
+                </div>
+                <div class="panel-body text-center">
+                    <div class="alert alert-info">
+                        <i class="iconfont" style="font-size: 48px; color: #337ab7;">&#xe61c;</i>
+                        <h4>认证结果处理中</h4>
+                        <p>正在查询认证结果，请稍候...</p>
+                    </div>
+                    <div id="result-info"></div>
+                    <div class="form-group">
+                        <a href="{:url('home/Member/index')}" class="btn btn-primary">返回个人中心</a>
+                        <a href="{:url('home/SimpleAuth/index')}" class="btn btn-default">重新认证</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 获取URL参数
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        certifyId: params.get('certifyId'),
+        outerOrderNo: params.get('outerOrderNo')
+    };
+}
+
+// 查询认证结果
+function checkAuthResult() {
+    const params = getUrlParams();
+    if (!params.certifyId) {
+        document.getElementById('result-info').innerHTML = '<div class="alert alert-danger"><p>缺少认证ID参数</p></div>';
+        return;
+    }
+
+    // 调用后端查询结果
+    fetch('/SimpleAuth/describe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            certifyId: params.certifyId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('认证结果:', data);
+        
+        if (data.code === 0) {
+            const result = data.data;
+            if (result.Passed === 'T') {
+                document.getElementById('result-info').innerHTML = 
+                    '<div class="alert alert-success"><h4>✅ 认证成功！</h4><p>您的身份信息已通过验证</p></div>';
+            } else {
+                document.getElementById('result-info').innerHTML = 
+                    '<div class="alert alert-danger"><h4>❌ 认证失败</h4><p>原因：' + (result.Reason || '未知原因') + '</p></div>';
+            }
+        } else {
+            document.getElementById('result-info').innerHTML = 
+                '<div class="alert alert-danger"><p>查询结果失败：' + data.msg + '</p></div>';
+        }
+    })
+    .catch(error => {
+        console.error('查询失败:', error);
+        document.getElementById('result-info').innerHTML = 
+            '<div class="alert alert-danger"><p>网络错误，请稍后重试</p></div>';
+    });
+}
+
+// 页面加载后自动查询结果
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(checkAuthResult, 1000); // 延迟1秒查询
+});
+</script>
+
+{/block}

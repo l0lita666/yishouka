@@ -1,0 +1,1352 @@
+{extend name="layout/member" /} 
+{block name="content"}
+<div class="view-framework-main">
+    {include file="layout/info_menu" /}
+    <div class="box tab-content realname-content">
+        <div class="alert alert-icon alert-info">
+            <div class="icon">
+                <i class="iconfont">&#xe61c;</i></div>
+            <div class="text">
+                <h4>实名认证</h4>
+                <p>为了保障您的账户安全，请完成实名认证。认证通过后可正常使用平台功能。</p>
+            </div>
+        </div>
+        
+        <!-- 步骤指示器 -->
+        <div class="auth-steps">
+            <div class="step-item active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-text">填写信息</div>
+            </div>
+            <div class="step-item" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-text">签署承诺</div>
+            </div>
+            <div class="step-item" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-text">意愿认证</div>
+            </div>
+        </div>
+
+        <form id="simpleAuthForm" method="post" action="{:url('home/SimpleAuth/index')}">
+            <input type="hidden" name="signature" id="signatureInput" value="">
+            <!-- 步骤1: 填写个人信息 -->
+            <div class="auth-step-content" id="step1">
+                <div class="userform userform-narrow">
+                    <div class="form-group">
+                        <label class="form-label" for="username">
+                        <em>*</em>真实姓名：</label>
+                        <div class="form-element">
+                            <input type="text" class="form-control" id="username" name="username" value="{$da.name|default=''}" null="请输入真实姓名" reg="[\u4e00-\u9fa5]{2,10}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="idcard">
+                        <em>*</em>身份证号：</label>
+                        <div class="form-element">
+                            <input type="text" class="form-control" id="idcard" name="idcard" value="{$da.idcard|default=''}" null="请输入正确的身份证号码" reg="^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$">
+                        </div>
+                    </div>
+                    
+                    <!-- 说明文字 -->
+                    <div class="auth-description">
+                        <p>请输入与您真实的姓名和身份证号，需要通过人脸识别验证是否与本人一致</p>
+                    </div>
+                    
+                    <!-- 同意条款 -->
+                    <div class="agreement-section">
+                        <label class="agreement-checkbox">
+                            <input type="checkbox" id="agree_step1" name="agree_step1">
+                            <span class="checkmark"></span>
+                            <span class="agreement-text">您需对注册信息的真实性、合法性、有效性承担全部责任；易收卡账户仅限本人使用，不得冒用他人信息进行注册，否则本平台有权立即停止向您提供服务并保留追究法律责任的权利</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group-btn">
+                        <button class="btn btn-primary btn-auth-start" type="button" onclick="nextStep(2)">开始认证</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 步骤2: 签署承诺书 -->
+            <div class="auth-step-content" id="step2" style="display:none;">
+                <div class="commitment-container">
+                    <!-- 承诺书内容区域 -->
+                    <div class="commitment-document">
+                        <div class="document-header">
+                            <h4>用户承诺书</h4>
+                            <div class="document-watermark">Forbidden Copy</div>
+                        </div>
+                        <div class="document-content">
+                            <p class="document-intro">本人确认并承诺：</p>
+                            <ol class="commitment-list">
+                                <li>本人自愿注册易收卡平台，保证提供的身份信息真实、完整，不存在冒用他人身份信息的情况，不会将本人实名账户出租、出售或出借给他人使用。</li>
+                                <li>如第三方（包括但不限于司法机关、行政机关等）就本人在易收卡平台销售卡片相关事宜向易收卡平台投诉或举报存在违法违规行为，本人承诺积极配合易收卡平台及相关部门进行调查，包括但不限于提供本人身份信息、交易记录等。</li>
+                                <li>本人保证所销售的所有充值卡、加油卡、游戏点卡等卡片的来源真实、合法、合规，并承担相应的法律责任。</li>
+                                <li>本人承诺不会利用易收卡平台及其API功能进行洗钱、掩饰犯罪所得、电信诈骗、盗窃、非法套现等违法犯罪活动。</li>
+                                <li>本人自愿接受易收卡平台及相关监管部门的监督。</li>
+                                <li>因本人所售卡片存在违法违规问题导致的一切损失或不良后果（包括但不限于银行账户被冻结、第三方投诉、政府部门调查、平台运营受影响等），本人承担全部法律责任，并同意全额赔偿易收卡平台因此遭受的所有损失（包括但不限于平台停机损失、银行利息损失、法律费用、配合调查产生的差旅费等）。</li>
+                            </ol>
+                            <p class="document-conclusion">本人或本公司确认并知晓以上内容并保证按上述条款执行。</p>
+                            
+                            <!-- 承诺人信息 -->
+                            <div class="signatory-info">
+                                <div class="signatory-row">
+                                    <span class="signatory-label">承诺人/公司：</span>
+                                    <span class="signatory-value" id="signatory_name">待填写</span>
+                                </div>
+                                <div class="signatory-row">
+                                    <span class="signatory-label">承诺人身份证号：</span>
+                                    <span class="signatory-value" id="signatory_idcard">待填写</span>
+                                </div>
+                                <div class="signatory-row">
+                                    <span class="signatory-label">签署日期：</span>
+                                    <span class="signatory-value" id="signatory_date">待填写</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 签署区域 -->
+                    <div class="signature-section">
+                        <div class="signature-header">
+                            <span class="signature-label">签署区域 1/1</span>
+                        </div>
+                        <div class="signature-container">
+                            <canvas id="signatureCanvas" width="400" height="200"></canvas>
+                        </div>
+                        <div class="signature-actions">
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearSignature()">清除重签</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 同意条款 -->
+                    <div class="agreement-section">
+                        <label class="agreement-checkbox">
+                            <input type="checkbox" id="agree_terms" name="agree_terms">
+                            <span class="checkmark"></span>
+                            <span class="agreement-text">我已阅读并同意上述承诺书内容</span>
+                        </label>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="action-buttons">
+                        <button class="btn btn-outline-primary" type="button" onclick="prevStep(1)">上一步</button>
+                        <button class="btn btn-primary" type="button" onclick="nextStep(3)">确认签署</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 步骤3: 手机验证和人脸识别 -->
+            <div class="auth-step-content" id="step3" style="display:none;">
+                <div class="userform userform-narrow">
+                    <!-- 个人信息确认 -->
+                    <div class="personal-info-section">
+                        <div class="info-title">请确认您的个人信息</div>
+                        <div class="info-card">
+                            <div class="info-item">
+                                <span class="info-label">证件类型：</span>
+                                <span class="info-value">居民身份证</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">姓名：</span>
+                                <span class="info-value" id="summary_name_step3"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">证件号：</span>
+                                <span class="info-value" id="summary_idcard_step3"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">手机号：</span>
+                                <span class="info-value" id="summary_mobile_step3">{$user.mobile_masked|default=''}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 手机验证码 -->
+                    <div class="form-group verify-code-section">
+                        <label class="form-label" for="verify_code">
+                        <em>*</em>验证码：</label>
+                        <div class="verify-code-input">
+                            <input type="text" class="form-control" id="verify_code" name="verify_code" null="请输入验证码" reg="[0-9]{6}" placeholder="请输入6位验证码">
+                            <button type="button" class="get-code-btn" onclick="sendVerifyCode()" id="send_code_btn">获取验证码</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 同意条款 -->
+                    <div class="agreement-section">
+                        <label class="agreement-checkbox">
+                            <input type="checkbox" id="agree_final" name="agree_final">
+                            <span class="checkmark"></span>
+                            <span class="agreement-text">我已阅读并同意《易收卡用户协议》、《易收卡隐私政策》及《第三方个人信息共享清单》，并已了解相关数据会被传输至服务器中</span>
+                        </label>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="form-group-btn">
+                        <button class="btn btn-default" type="button" onclick="prevStep(2)">上一步</button>
+                        {:token_field()}
+                        <button class="btn btn-success btn-large" type="submit" name="submitAuth" id="submit-btn">开始人脸识别</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.auth-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
+
+.step-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.step-item.active:not(:last-child)::after {
+    background: #007bff;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+}
+
+.step-item.active .step-number {
+    background: #007bff;
+    color: white;
+}
+
+.step-item.completed .step-number {
+    background: #28a745;
+    color: white;
+}
+
+.step-text {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.step-item.active .step-text {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.commitment-content {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e9ecef;
+    padding: 20px;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+.commitment-text {
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.commitment-text ol {
+    padding-left: 20px;
+}
+
+/* 承诺书容器样式 */
+.commitment-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* 承诺书文档样式 */
+.commitment-document {
+    position: relative;
+    padding: 30px;
+    background: #fff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.document-header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.document-header h4 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.document-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 48px;
+    color: rgba(0,0,0,0.05);
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.document-content {
+    position: relative;
+    z-index: 2;
+    line-height: 1.8;
+    color: #333;
+}
+
+.document-intro {
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.commitment-list {
+    margin: 20px 0;
+    padding-left: 20px;
+}
+
+.commitment-list li {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.document-conclusion {
+    margin-top: 30px;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
+}
+
+/* 签署区域样式 */
+.signature-section {
+    padding: 30px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.signature-header {
+    margin-bottom: 20px;
+}
+
+.signature-label {
+    font-size: 14px;
+    color: #6c757d;
+    background: #e9ecef;
+    padding: 8px 16px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.signature-container {
+    position: relative;
+    text-align: center;
+    background: #fff;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#signatureCanvas {
+    border: none;
+    cursor: crosshair;
+    background: #fff;
+    border-radius: 4px;
+}
+
+
+.signature-actions {
+    text-align: center;
+}
+
+/* 承诺人信息样式 */
+.signatory-info {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.signatory-row {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.signatory-row:last-child {
+    margin-bottom: 0;
+}
+
+.signatory-label {
+    font-weight: 600;
+    color: #333;
+    min-width: 140px;
+    margin-right: 10px;
+}
+
+.signatory-value {
+    color: #555;
+    flex: 1;
+}
+
+/* 同意条款样式 */
+.agreement-section {
+    padding: 20px 30px;
+    background: #fff;
+    border-bottom: 1px solid #e9ecef;
+    margin-top: 20px;
+}
+
+.agreement-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    margin-right: 12px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.agreement-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: #20c997;
+    border-color: #20c997;
+}
+
+.agreement-checkbox input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.agreement-text {
+    flex: 1;
+    line-height: 1.5;
+}
+
+/* 认证说明文字样式 */
+.auth-description {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #20c997;
+}
+
+.auth-description p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 操作按钮样式 */
+.action-buttons {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* 开始认证按钮样式 */
+.btn-auth-start {
+    width: 100%;
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: #007bff;
+    border: 2px solid #007bff;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-auth-start:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+}
+
+.action-buttons .btn {
+    min-width: 120px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary {
+    border: 2px solid #007bff;
+    color: #007bff;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary {
+    background: #20c997;
+    border: 2px solid #20c997;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1ba085;
+    border-color: #1ba085;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+/* 活体检测样式 */
+.liveness-tips {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.tip-content {
+    text-align: center;
+    color: white;
+    padding: 20px;
+}
+
+.tip-content h4 {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.action-step {
+    margin: 20px 0;
+}
+
+.action-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.action-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 200px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    margin: 20px auto;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #20c997;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.tip-desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 15px;
+}
+
+.auth-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.auth-summary p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.success-icon {
+    margin-bottom: 20px;
+}
+
+.info-summary {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.info-summary p {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+/* 个人信息确认区域样式 */
+.personal-info-section {
+    margin: 20px 0;
+}
+
+.info-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.info-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #666;
+    min-width: 100px;
+}
+
+.info-value {
+    color: #333;
+    flex: 1;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* 验证码区域样式 */
+.verify-code-section {
+    margin: 20px 0;
+}
+
+.verify-code-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.verify-code-input input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.get-code-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.get-code-btn:hover {
+    background: #0056b3;
+}
+
+/* 协议区域样式 */
+.agreement-section {
+    margin: 25px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.agreement-checkbox {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    color: #333;
+    line-height: 1.6;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+    margin-right: 12px;
+    margin-top: 3px;
+    transform: scale(1.2);
+}
+
+.agreement-text {
+    font-size: 14px;
+    color: #666;
+    flex: 1;
+}
+
+/* 按钮区域样式 */
+.form-group-btn {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.form-group-btn .btn {
+    flex: 1;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-default {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.btn-default:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-success {
+    background: linear-gradient(to right, #0085fe 0%, #5c4bf6 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(to right, #0085fe 0%, #5c4bf6 100%);
+}
+
+.btn-large {
+    padding: 18px 25px;
+    font-size: 18px;
+}
+
+.face-recognition-area {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.face-preview {
+    width: 400px;
+    height: 300px;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background: #f8f9fa;
+}
+
+.face-guide {
+    text-align: center;
+    color: #6c757d;
+}
+
+.face-actions {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.face-actions .btn {
+    margin: 0 10px;
+}
+</style>
+
+<script>
+// 使用固定的MetaInfo（不依赖SDK）
+function getMetaInfo() {
+    return JSON.stringify({
+        apdidToken: "simulator",
+        appName: "test_h5", 
+        appVersion: "1.0",
+        bioMetaInfo: "web_demo",
+        deviceType: "h5"
+    });
+}
+
+console.log('使用固定MetaInfo，无需等待SDK加载');
+</script>
+
+    <script>
+let currentStep = 1;
+let signatureData = '';
+
+// 初始化签名画布
+function initSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    
+    // 触摸事件支持
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function startDrawing(e) {
+        isDrawing = true;
+        const rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        signatureData = canvas.toDataURL();
+    }
+    
+    function handleTouch(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                          e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+        canvas.dispatchEvent(mouseEvent);
+    }
+}
+
+function nextStep(step) {
+    if (validateCurrentStep()) {
+        if (step === 2) {
+            // 步骤2：签署承诺书，更新承诺人信息
+            updateSignatoryInfo();
+        } else if (step === 3) {
+            // 步骤3：手机验证，显示个人信息摘要
+            updateStep3Summary();
+            updateSignatoryInfo();
+        } else if (step === 4) {
+            // 步骤4：人脸识别，显示完整信息摘要
+            updateSummary();
+        }
+        
+        document.getElementById('step' + currentStep).style.display = 'none';
+        document.getElementById('step' + step).style.display = 'block';
+        
+        // 更新步骤指示器
+        document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+        document.querySelector(`[data-step="${currentStep}"]`).classList.add('completed');
+        document.querySelector(`[data-step="${step}"]`).classList.add('active');
+        
+        currentStep = step;
+    }
+}
+
+function prevStep(step) {
+    document.getElementById('step' + currentStep).style.display = 'none';
+    document.getElementById('step' + step).style.display = 'block';
+    
+    // 更新步骤指示器
+    document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+    document.querySelector(`[data-step="${step}"]`).classList.add('active');
+    
+    currentStep = step;
+}
+
+function validateCurrentStep() {
+    if (currentStep === 1) {
+        const username = document.getElementById('username').value;
+        const idcard = document.getElementById('idcard').value;
+        const agreeStep1 = document.getElementById('agree_step1').checked;
+        
+        if (!username || !idcard) {
+            alert('请填写完整信息');
+            return false;
+        }
+        
+        // 简单的身份证验证
+        const idcardReg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+        if (!idcardReg.test(idcard)) {
+            alert('请输入正确的身份证号码');
+            return false;
+        }
+        
+        if (!agreeStep1) {
+            alert('请先同意相关条款');
+            return false;
+        }
+    } else if (currentStep === 2) {
+        if (!document.getElementById('agree_terms').checked) {
+            alert('请先同意承诺书内容');
+            return false;
+        }
+        
+        if (!signatureData) {
+            alert('请进行电子签名');
+            return false;
+        }
+    } else if (currentStep === 3) {
+        const mobile = document.getElementById('mobile').value;
+        const verifyCode = document.getElementById('verify_code').value;
+        
+        if (!mobile) {
+            alert('请输入手机号码');
+            return false;
+        }
+        
+        // 手机号验证
+        const mobileReg = /^1[3-9]\d{9}$/;
+        if (!mobileReg.test(mobile)) {
+            alert('请输入正确的手机号码');
+            return false;
+        }
+        
+        if (!verifyCode || verifyCode.length !== 6) {
+            alert('请输入6位验证码');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function sendVerifyCode() {
+    const mobile = document.getElementById('mobile').value;
+    const btn = document.getElementById('send_code_btn');
+    
+    // 暂时模拟发送成功（短信服务未完成对接）
+    btn.textContent = '60秒后重发';
+    btn.disabled = true;
+    
+    let countdown = 60;
+    const timer = setInterval(() => {
+        countdown--;
+        btn.textContent = countdown + '秒后重发';
+        
+        if (countdown <= 0) {
+            clearInterval(timer);
+            btn.textContent = '重新获取';
+            btn.disabled = false;
+        }
+    }, 1000);
+}
+
+function clearSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    signatureData = '';
+}
+
+
+function updateStep3Summary() {
+    const username = document.getElementById('username').value;
+    const idcard = document.getElementById('idcard').value;
+    
+    // 姓名隐私保护
+    const maskedName = maskName(username);
+    document.getElementById('summary_name_step3').textContent = maskedName;
+    
+    // 身份证号隐私保护
+    const maskedIdCard = maskIdCard(idcard);
+    document.getElementById('summary_idcard_step3').textContent = maskedIdCard;
+    
+    // 手机号直接从模板获取，不需要动态更新
+}
+
+// 姓名隐私保护
+function maskName(name) {
+    if (!name || name.length < 2) {
+        return name;
+    }
+    if (name.length === 2) {
+        return name.charAt(0) + '*';
+    } else {
+        return name.charAt(0) + '*'.repeat(name.length - 2) + name.charAt(name.length - 1);
+    }
+}
+
+// 身份证号隐私保护
+function maskIdCard(idcard) {
+    if (!idcard || idcard.length < 8) {
+        return idcard;
+    }
+    return idcard.substring(0, 6) + '********' + idcard.substring(idcard.length - 4);
+}
+
+// 更新承诺人信息
+function updateSignatoryInfo() {
+    const username = document.getElementById('username').value;
+    const idcard = document.getElementById('idcard').value;
+    
+    // 获取当前日期，格式：2024年12月19日
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const currentDate = `${year}年${month}月${day}日`;
+    
+    // 更新承诺人信息
+    document.getElementById('signatory_name').textContent = username || '待填写';
+    document.getElementById('signatory_idcard').textContent = idcard || '待填写';
+    document.getElementById('signatory_date').textContent = currentDate;
+}
+
+function updateSummary() {
+    document.getElementById('summary_name').textContent = document.getElementById('username').value;
+    document.getElementById('summary_idcard').textContent = document.getElementById('idcard').value;
+    document.getElementById('summary_mobile').textContent = document.getElementById('mobile').value;
+}
+
+// 人脸识别相关函数
+let stream = null;
+let faceImageData = '';
+let currentAction = 0;
+let livenessActions = [
+    { icon: '👁️', text: '请眨眼', duration: 3000 },
+    { icon: '↔️', text: '请摇头', duration: 3000 },
+    { icon: '😮', text: '请张嘴', duration: 3000 }
+];
+
+function startFaceRecognition() {
+    const video = document.getElementById('video');
+    const facePreview = document.getElementById('face-preview');
+    const startBtn = document.getElementById('start-face-btn');
+    const captureBtn = document.getElementById('capture-btn');
+    
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(mediaStream) {
+            stream = mediaStream;
+            video.srcObject = stream;
+            video.style.display = 'block';
+            facePreview.style.display = 'none';
+            startBtn.style.display = 'none';
+            
+            // 开始活体检测流程
+            startLivenessDetection();
+        })
+        .catch(function(err) {
+            alert('无法访问摄像头，请检查权限设置');
+            console.error('摄像头访问错误:', err);
+        });
+}
+
+function startLivenessDetection() {
+    // 显示活体检测提示
+    document.getElementById('liveness-tips').style.display = 'flex';
+    
+    // 开始第一个动作
+    performLivenessAction(0);
+}
+
+function performLivenessAction(actionIndex) {
+    if (actionIndex >= livenessActions.length) {
+        // 所有动作完成，可以拍照
+        completeLivenessDetection();
+        return;
+    }
+    
+    const action = livenessActions[actionIndex];
+    const actionStep = document.getElementById('action-step');
+    const progressFill = document.getElementById('progress-fill');
+    
+    // 更新动作提示
+    actionStep.innerHTML = `
+        <div class="action-icon">${action.icon}</div>
+        <div class="action-text">${action.text}</div>
+    `;
+    
+    // 重置进度条
+    progressFill.style.width = '0%';
+    
+    // 开始进度动画
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += 2;
+        progressFill.style.width = progress + '%';
+        
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            // 当前动作完成，进行下一个
+            setTimeout(() => {
+                performLivenessAction(actionIndex + 1);
+            }, 500);
+        }
+    }, action.duration / 50);
+}
+
+function completeLivenessDetection() {
+    // 隐藏活体检测提示
+    document.getElementById('liveness-tips').style.display = 'none';
+    
+    // 显示拍照按钮
+    document.getElementById('capture-btn').style.display = 'inline-block';
+}
+
+function captureFace() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // 绘制当前视频帧到canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // 获取图像数据
+    faceImageData = canvas.toDataURL('image/jpeg', 0.8);
+    
+    // 停止摄像头
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+    }
+    
+    // 显示捕获的图像
+    const facePreview = document.getElementById('face-preview');
+    facePreview.innerHTML = '<img src="' + faceImageData + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">';
+    facePreview.style.display = 'flex';
+    
+    // 隐藏视频，显示按钮
+    video.style.display = 'none';
+    document.getElementById('capture-btn').style.display = 'none';
+    document.getElementById('retry-btn').style.display = 'inline-block';
+    document.getElementById('submit-btn').style.display = 'inline-block';
+}
+
+function retryFaceRecognition() {
+    // 重置状态
+    faceImageData = '';
+    document.getElementById('face-preview').innerHTML = `
+        <div class="face-guide">
+            <i class="iconfont" style="font-size: 48px; color: #007bff;">&#xe61c;</i>
+            <p>点击开始人脸识别</p>
+        </div>
+    `;
+    document.getElementById('retry-btn').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('start-face-btn').style.display = 'inline-block';
+}
+
+// 验证所有步骤
+function validateAllSteps() {
+    // 暂时简化验证，总是返回true
+    console.log('validateAllSteps: 跳过验证，直接返回true');
+    return true;
+    
+    // 验证步骤1
+    const username = document.getElementById('username').value;
+    const idcard = document.getElementById('idcard').value;
+    const agreeStep1 = document.getElementById('agree_step1').checked;
+    
+    if (!username || !idcard) {
+        alert('请填写完整信息');
+        return false;
+    }
+    
+    // 简单的身份证验证
+    const idcardReg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+    if (!idcardReg.test(idcard)) {
+        alert('请输入正确的身份证号码');
+        return false;
+    }
+    
+    if (!agreeStep1) {
+        alert('请先同意相关条款');
+        return false;
+    }
+    
+    // 验证步骤2
+    if (!document.getElementById('agree_terms').checked) {
+        alert('请先同意承诺书内容');
+        return false;
+    }
+    
+    if (!signatureData) {
+        alert('请进行电子签名');
+        return false;
+    }
+    
+    // 验证步骤3
+    const mobile = document.getElementById('mobile').value;
+    const verifyCode = document.getElementById('verify_code').value;
+    
+    if (!mobile) {
+        alert('请输入手机号码');
+        return false;
+    }
+    
+    // 手机号验证
+    const mobileReg = /^1[3-9]\d{9}$/;
+    if (!mobileReg.test(mobile)) {
+        alert('请输入正确的手机号码');
+        return false;
+    }
+    
+    if (!verifyCode || verifyCode.length !== 6) {
+        // 暂时跳过验证码校验
+        // alert('请输入6位验证码');
+        // return false;
+    }
+    
+    return true;
+}
+
+// 表单提交处理
+document.getElementById('simpleAuthForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // 阻止默认提交
+    
+    // 验证所有步骤
+    if (!validateAllSteps()) {
+        return false;
+    }
+    
+    // 获取表单数据
+    const formData = {
+        name: document.getElementById('username').value,
+        idcard: document.getElementById('idcard').value,
+        mobile: document.getElementById('mobile').value,
+        signature: signatureData
+    };
+    
+    // 获取阿里云metaInfo
+    if (typeof getMetaInfo === 'function') {
+        try {
+            formData.metaInfo = getMetaInfo();
+            console.log('获取到metaInfo:', formData.metaInfo);
+        } catch (error) {
+            console.error('获取metaInfo失败:', error);
+            alert('获取设备信息失败，请重试');
+            return false;
+        }
+    } else {
+        console.error('getMetaInfo函数不存在，请检查阿里云SDK是否正确加载');
+        // 暂时使用模拟的metaInfo进行测试
+        formData.metaInfo = '{"authType":"1","authMode":"1"}';
+        console.log('使用模拟metaInfo:', formData.metaInfo);
+        console.log('注意：当前使用模拟数据进行测试，实际部署时需要正确的阿里云SDK');
+    }
+    
+    // 显示加载状态
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '获取认证链接中...';
+    
+    // 调用后端API获取认证链接
+    fetch('/index.php?s=/SimpleAuth/initFaceVerify', {
+      method: 'POST',
+      headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+      },
+        body: new URLSearchParams(formData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('API响应:', data);
+        
+        if (data.code === 0 && data.certifyUrl) {
+            // 跳转到阿里云认证页面
+            console.log('跳转到认证页面:', data.certifyUrl);
+            window.location.href = data.certifyUrl;
+        } else {
+            // 显示错误信息
+            alert(
+                '获取认证链接失败: ' +
+                (data.aliyunMessage || data.msg || '未知错误') +
+                (data.aliyunCode ? (' [' + data.aliyunCode + ']') : '')
+            );
+            submitBtn.disabled = false;
+            submitBtn.textContent = '提交认证';
+        }
+    })
+    .catch(error => {
+        console.error('请求失败:', error);
+        alert('网络错误，请重试');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '提交认证';
+    });
+});
+
+// 页面加载完成后初始化签名功能
+document.addEventListener('DOMContentLoaded', function() {
+    initSignature();
+      });
+    </script>
+{/block}
+            

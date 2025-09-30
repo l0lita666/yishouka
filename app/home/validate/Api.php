@@ -46,7 +46,7 @@ class Api extends Validate
 	
 	public function sceneLogin(){
 		return $this->only(['phoneno'])
-		        ->remove('phoneno', ['noMobile','okMobile']);
+		        ->remove('phoneno', ['isMobile','noMobile','okMobile']);
 	}
 	
 	public function sceneSetphoto(){
