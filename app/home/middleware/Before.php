@@ -9,9 +9,18 @@ class Before
     
     public function handle($request, \Closure $next)
     {
+        // 对于SimpleAuth控制器的initFaceVerify方法，跳过安全检查
+        if ($request->controller() === 'SimpleAuth' && $request->action() === 'initFaceVerify') {
+            return $next($request);
+        }
+        
 		$data=input();
 		$ok=true;
 		foreach($data as $key=>$value){
+			// 跳过signature字段的检查，因为它可能包含base64图片数据
+			if ($key === 'signature') {
+				continue;
+			}
 			$ok=$this->stopattack($key,$value,$this->postfilter);
 			if(!$ok)break;
 		}

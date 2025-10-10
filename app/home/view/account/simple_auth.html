@@ -20,7 +20,7 @@
             </div>
             <div class="step-item" data-step="2">
                 <div class="step-number">2</div>
-                <div class="step-text">签署承诺</div>
+                <div class="step-text">签署承诺222</div>
             </div>
             <div class="step-item" data-step="3">
                 <div class="step-number">3</div>
@@ -844,7 +844,7 @@ function getMetaInfo() {
 console.log('使用固定MetaInfo，无需等待SDK加载');
 </script>
 
-    <script>
+<script>
 let currentStep = 1;
 let signatureData = '';
 
@@ -993,7 +993,8 @@ function sendVerifyCode() {
     const mobile = document.getElementById('mobile').value;
     const btn = document.getElementById('send_code_btn');
     
-    // 暂时模拟发送成功（短信服务未完成对接）
+    // 这里应该调用发送验证码的API
+    // 暂时模拟发送成功
     btn.textContent = '60秒后重发';
     btn.disabled = true;
     
@@ -1016,7 +1017,6 @@ function clearSignature() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     signatureData = '';
 }
-
 
 function updateStep3Summary() {
     const username = document.getElementById('username').value;
@@ -1310,14 +1310,14 @@ document.getElementById('simpleAuthForm').addEventListener('submit', function(e)
     
     // 调用后端API获取认证链接
     fetch('/index.php?s=/SimpleAuth/initFaceVerify', {
-      method: 'POST',
-      headers: {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-      },
+        },
         body: new URLSearchParams(formData)
     })
-      .then(response => response.json())
-      .then(data => {
+    .then(response => response.json())
+    .then(data => {
         console.log('API响应:', data);
         
         if (data.code === 0 && data.certifyUrl) {
@@ -1346,7 +1346,6 @@ document.getElementById('simpleAuthForm').addEventListener('submit', function(e)
 // 页面加载完成后初始化签名功能
 document.addEventListener('DOMContentLoaded', function() {
     initSignature();
-      });
-    </script>
+});
+</script>
 {/block}
-            

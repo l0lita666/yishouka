@@ -1,215 +1,219 @@
 {include file="layout/wap/tou2" /}
+<!-- 确保页面编码正确 -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <div class="myheader" id="myheader">
-	<header class="header header-default">
-		<button class="btn btn-back fl" type="button" onclick="javascript:history.back(-1);">
-			<i class="iconfont iconfont-back"></i>
-		</button>
-		<div class="header-title">
-			<h1 class="title">实名认证</h1>
-		</div>
-	</header>
+    <header class="header header-default">
+        <button class="btn btn-back fl" type="button" onclick="javascript:history.back(-1);">
+            <i class="iconfont iconfont-back"></i>
+        </button>
+        <div class="header-title">
+            <h1 class="title">实名认证</h1>
+        </div>
+    </header>
 </div>
 
 <div class="mycontent" id="mycontent">
-	<!-- 步骤指示器 -->
-	<div class="auth-steps-mobile">
-		<div class="step-item active" data-step="1">
-			<div class="step-number">1</div>
-			<div class="step-text">填写信息</div>
-		</div>
-		<div class="step-item" data-step="2">
-			<div class="step-number">2</div>
-			<div class="step-text">签署承诺</div>
-		</div>
-		<div class="step-item" data-step="3">
-			<div class="step-number">3</div>
-			<div class="step-text">意愿认证</div>
-		</div>
-	</div>
+    <!-- 步骤指示器 -->
+    <div class="auth-steps-mobile">
+        <div class="step-item active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-text">填写信息</div>
+        </div>
+        <div class="step-item" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-text">签署承诺书</div>
+        </div>
+        <div class="step-item" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-text">意愿认证</div>
+        </div>
+    </div>
 
-        <form id="simpleAuthForm" method="post" action="{:url('home/SimpleAuth/index')}">
-            <input type="hidden" name="signature" id="signatureInput" value="">
-		<!-- 步骤1: 填写个人信息 -->
-		<div class="auth-step-content" id="step1">
-			<div class="card">
-				<div class="cell">
-					<div class="cell-hd">
-						<label class="control-label">真实姓名</label>
-					</div>
-					<div class="cell-bd">
-						<input type="text" class="form-control" id="username" name="username" value="{$da.name|default=''}" null="请输入真实姓名" placeholder="请输入真实姓名" reg="[\u4e00-\u9fa5]{2,10}" data-input="clear">
-					</div>
-				</div>
-				<div class="cell">
-					<div class="cell-hd">
-						<label class="control-label">身份证号</label>
-					</div>
-					<div class="cell-bd">
-						<input type="text" class="form-control" id="idcard" name="idcard" value="{$da.idcard|default=''}" null="请输入正确的身份证号码" placeholder="请输入您的身份证号码" reg="^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$" data-input="clear">
-					</div>
-				</div>
-			</div>
-			
-			<!-- 说明文字 -->
-			<div class="auth-description-mobile">
-				<p>请输入与您真实的姓名和身份证号，需要通过人脸识别验证是否与本人一致</p>
-			</div>
-			
-			<!-- 同意条款 -->
-			<div class="card">
-				<div class="cell">
-					<div class="cell-bd">
-						<label class="agreement-checkbox-mobile">
-							<input type="checkbox" id="agree_step1" name="agree_step1">
-							<span class="checkmark-mobile"></span>
-							<span class="agreement-text-mobile">您需对注册信息的真实性、合法性、有效性承担全部责任；易收卡账户仅限本人使用，不得冒用他人信息进行注册，否则本平台有权立即停止向您提供服务并保留追究法律责任的权利</span>
-						</label>
-					</div>
-				</div>
-			</div>
-			
-			<div class="myaction-wrapper">
-				<div class="myaction">
-					<div class="btn-group">
-						<button class="btn btn-primary btn-auth-start-mobile" type="button" onclick="nextStep(2)">开始认证</button>
-					</div>
-				</div>
-			</div>
-		</div>
+    <form id="simpleAuthForm" method="post" action="{:url('home/SimpleAuth/index')}">
+        <input type="hidden" name="signature" id="signatureInput" value="">
+        <!-- 新增：给JS使用的隐藏手机号，避免取值报错 -->
+        <input type="hidden" id="mobile" name="mobile" value="{$user.mobile|default=''}">
 
-		<!-- 步骤2: 签署承诺书 -->
-		<div class="auth-step-content" id="step2" style="display:none;">
-			<div class="commitment-mobile">
-				<!-- 承诺书内容 -->
-				<div class="document-mobile">
-					<div class="document-header-mobile">
-						<h4>用户承诺书</h4>
-						<div class="document-watermark-mobile">Forbidden Copy</div>
-					</div>
-					<div class="document-content-mobile">
-						<p class="document-intro-mobile">本人确认并承诺：</p>
-						<ol class="commitment-list-mobile">
-							<li>本人自愿注册易收卡平台，保证提供的身份信息真实、完整，不存在冒用他人身份信息的情况，不会将本人实名账户出租、出售或出借给他人使用。</li>
-							<li>如第三方（包括但不限于司法机关、行政机关等）就本人在易收卡平台销售卡片相关事宜向易收卡平台投诉或举报存在违法违规行为，本人承诺积极配合易收卡平台及相关部门进行调查，包括但不限于提供本人身份信息、交易记录等。</li>
-							<li>本人保证所销售的所有充值卡、加油卡、游戏点卡等卡片的来源真实、合法、合规，并承担相应的法律责任。</li>
-							<li>本人承诺不会利用易收卡平台及其API功能进行洗钱、掩饰犯罪所得、电信诈骗、盗窃、非法套现等违法犯罪活动。</li>
-							<li>本人自愿接受易收卡平台及相关监管部门的监督。</li>
-							<li>因本人所售卡片存在违法违规问题导致的一切损失或不良后果（包括但不限于银行账户被冻结、第三方投诉、政府部门调查、平台运营受影响等），本人承担全部法律责任，并同意全额赔偿易收卡平台因此遭受的所有损失（包括但不限于平台停机损失、银行利息损失、法律费用、配合调查产生的差旅费等）。</li>
-						</ol>
-						<p class="document-conclusion-mobile">本人或本公司确认并知晓以上内容并保证按上述条款执行。</p>
-						
-						<!-- 承诺人信息 -->
-						<div class="signatory-info-mobile">
-							<div class="signatory-row-mobile">
-								<span class="signatory-label-mobile">承诺人/公司：</span>
-								<span class="signatory-value-mobile" id="signatory_name">待填写</span>
-							</div>
-							<div class="signatory-row-mobile">
-								<span class="signatory-label-mobile">承诺人身份证号：</span>
-								<span class="signatory-value-mobile" id="signatory_idcard">待填写</span>
-							</div>
-							<div class="signatory-row-mobile">
-								<span class="signatory-label-mobile">签署日期：</span>
-								<span class="signatory-value-mobile" id="signatory_date">待填写</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<!-- 签署区域 -->
-				<div class="signature-mobile">
-					<div class="signature-header-mobile">
-						<span class="signature-label-mobile">签署区域 1/1</span>
-					</div>
-					<div class="signature-container-mobile">
-						<canvas id="signatureCanvas" width="300" height="150"></canvas>
-					</div>
-					<div class="signature-actions-mobile">
-						<button type="button" class="btn btn-outline-secondary-mobile" onclick="clearSignature()">清除重签</button>
-					</div>
-				</div>
-				
-				<!-- 同意条款 -->
-				<div class="agreement-mobile">
-					<label class="agreement-checkbox-mobile">
-						<input type="checkbox" id="agree_terms" name="agree_terms">
-						<span class="checkmark-mobile"></span>
-						<span class="agreement-text-mobile">我已阅读并同意上述承诺书内容</span>
-					</label>
-				</div>
-			</div>
-			
-			<div class="myaction-wrapper">
-				<div class="myaction">
-					<div class="btn-group">
-						<button class="btn btn-default" type="button" onclick="prevStep(1)">上一步</button>
-						<button class="btn btn-primary" type="button" onclick="nextStep(3)">确认签署</button>
-					</div>
-				</div>
-			</div>
-		</div>
+        <!-- 步骤1: 填写个人信息 -->
+        <div class="auth-step-content" id="step1">
+            <div class="card">
+                <div class="cell">
+                    <div class="cell-hd">
+                        <label class="control-label">真实姓名</label>
+                    </div>
+                    <div class="cell-bd">
+                        <input type="text" class="form-control" id="username" name="username" value="{$da.name|default=''}" null="请输入真实姓名" placeholder="请输入真实姓名" reg="[\u4e00-\u9fa5]{2,10}" data-input="clear">
+                    </div>
+                </div>
+                <div class="cell">
+                    <div class="cell-hd">
+                        <label class="control-label">身份证号</label>
+                    </div>
+                    <div class="cell-bd">
+                        <input type="text" class="form-control" id="idcard" name="idcard" value="{$da.idcard|default=''}" null="请输入正确的身份证号码" placeholder="请输入您的身份证号码" reg="^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$" data-input="clear">
+                    </div>
+                </div>
+            </div>
 
-		<!-- 步骤3: 手机验证和人脸识别 -->
-		<div class="auth-step-content" id="step3" style="display:none;">
-			<div class="card">
-				<!-- 个人信息确认 -->
-				<div class="personal-info-section-mobile">
-					<div class="info-title-mobile">请确认您的个人信息</div>
-					<div class="info-card-mobile">
-						<div class="info-item-mobile">
-							<span class="info-label">证件类型：</span>
-							<span class="info-value">居民身份证</span>
-						</div>
-						<div class="info-item-mobile">
-							<span class="info-label">姓名：</span>
-							<span class="info-value" id="summary_name_step3"></span>
-						</div>
-						<div class="info-item-mobile">
-							<span class="info-label">证件号：</span>
-							<span class="info-value" id="summary_idcard_step3"></span>
-						</div>
-						<div class="info-item-mobile">
-							<span class="info-label">手机号：</span>
-							<span class="info-value" id="summary_mobile_step3">{$user.mobile_masked|default=''}</span>
-						</div>
-					</div>
-				</div>
-				
-				<div class="cell">
-					<div class="cell-hd">
-						<label class="control-label">验证码</label>
-					</div>
-					<div class="cell-bd">
-						<div class="verify-code-input-mobile">
-							<input type="text" class="form-control" id="verify_code" name="verify_code" null="请输入验证码" placeholder="请输入6位验证码" reg="[0-9]{6}" data-input="clear">
-							<button type="button" class="get-code-btn-mobile" onclick="sendVerifyCode()" id="send_code_btn">获取验证码</button>
-						</div>
-					</div>
-				</div>
-				<div class="cell">
-					<div class="cell-bd">
-						<div class="agreement-section-mobile">
-							<label class="agreement-checkbox-mobile">
-								<input type="checkbox" id="agree_final" name="agree_final">
-								<span class="checkmark"></span>
-								<span class="agreement-text">我已阅读并同意《易收卡用户协议》、《易收卡隐私政策》及《第三方个人信息共享清单》，并已了解相关数据会被传输至服务器中</span>
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="myaction-wrapper">
-				<div class="myaction">
-					<div class="btn-group">
-						<button class="btn btn-default" type="button" onclick="prevStep(2)">上一步</button>
-						{:token_field()}
-						<button class="btn btn-success btn-large" type="submit" name="submitAuth" id="submit-btn">开始人脸识别</button>
-					</div>
-				</div>
-			</div>
-		</div>
+            <!-- 说明文字 -->
+            <div class="auth-description-mobile">
+                <p>请输入与您真实的姓名和身份证号，需要通过人脸识别验证是否与本人一致</p>
+            </div>
 
-	</form>
+            <!-- 同意条款 -->
+            <div class="card">
+                <div class="cell">
+                    <div class="cell-bd">
+                        <label class="agreement-checkbox-mobile">
+                            <input type="checkbox" id="agree_step1" name="agree_step1">
+                            <span class="checkmark-mobile"></span>
+                            <span class="agreement-text-mobile">您需对注册信息的真实性、合法性、有效性承担全部责任；易收卡账户仅限本人使用，不得冒用他人信息进行注册，否则本平台有权立即停止向您提供服务并保留追究法律责任的权利</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="myaction-wrapper">
+                <div class="myaction">
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-auth-start-mobile" type="button" onclick="nextStep(2)">开始认证</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤2: 签署承诺书 -->
+        <div class="auth-step-content" id="step2" style="display:none;">
+            <div class="commitment-mobile">
+                <!-- 承诺书内容 -->
+                <div class="document-mobile">
+                    <div class="document-header-mobile">
+                        <h4>用户承诺书</h4>
+                        <div class="document-watermark-mobile">Forbidden Copy</div>
+                    </div>
+                    <div class="document-content-mobile">
+                        <p class="document-intro-mobile">本人确认并承诺：</p>
+                        <ol class="commitment-list-mobile">
+                            <li>本人自愿注册易收卡平台，保证提供的身份信息真实、完整，不存在冒用他人身份信息的情况，不会将本人实名账户出租、出售或出借给他人使用。</li>
+                            <li>如第三方（包括但不限于司法机关、行政机关等）就本人在易收卡平台销售卡片相关事宜向易收卡平台投诉或举报存在违法违规行为，本人承诺积极配合易收卡平台及相关部门进行调查，包括但不限于提供本人身份信息、交易记录等。</li>
+                            <li>本人保证所销售的所有充值卡、加油卡、游戏点卡等卡片的来源真实、合法、合规，并承担相应的法律责任。</li>
+                            <li>本人承诺不会利用易收卡平台及其API功能进行洗钱、掩饰犯罪所得、电信诈骗、盗窃、非法套现等违法犯罪活动。</li>
+                            <li>本人自愿接受易收卡平台及相关监管部门的监督。</li>
+                            <li>因本人所售卡片存在违法违规问题导致的一切损失或不良后果（包括但不限于银行账户被冻结、第三方投诉、政府部门调查、平台运营受影响等），本人承担全部法律责任，并同意全额赔偿易收卡平台因此遭受的所有损失（包括但不限于平台停机损失、银行利息损失、法律费用、配合调查产生的差旅费等）。</li>
+                        </ol>
+                        <p class="document-conclusion-mobile">本人或本公司确认并知晓以上内容并保证按上述条款执行。</p>
+
+                        <!-- 承诺人信息 -->
+                        <div class="signatory-info-mobile">
+                            <div class="signatory-row-mobile">
+                                <span class="signatory-label-mobile">承诺人/公司：</span>
+                                <span class="signatory-value-mobile" id="signatory_name">待填写</span>
+                            </div>
+                            <div class="signatory-row-mobile">
+                                <span class="signatory-label-mobile">承诺人身份证号：</span>
+                                <span class="signatory-value-mobile" id="signatory_idcard">待填写</span>
+                            </div>
+                            <div class="signatory-row-mobile">
+                                <span class="signatory-label-mobile">签署日期：</span>
+                                <span class="signatory-value-mobile" id="signatory_date">待填写</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 签署区域 -->
+                <div class="signature-mobile">
+                    <div class="signature-header-mobile">
+                        <span class="signature-label-mobile">签署区域 1/1</span>
+                    </div>
+                    <div class="signature-container-mobile">
+                        <canvas id="signatureCanvas" width="300" height="150"></canvas>
+                    </div>
+                    <div class="signature-actions-mobile">
+                        <button type="button" class="btn btn-outline-secondary-mobile" onclick="clearSignature()">清除重签</button>
+                    </div>
+                </div>
+
+                <!-- 同意条款 -->
+                <div class="agreement-mobile">
+                    <label class="agreement-checkbox-mobile">
+                        <input type="checkbox" id="agree_terms" name="agree_terms">
+                        <span class="checkmark-mobile"></span>
+                        <span class="agreement-text-mobile">我已阅读并同意上述承诺书内容</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="myaction-wrapper">
+                <div class="myaction">
+                    <div class="btn-group">
+                        <button class="btn btn-default" type="button" onclick="prevStep(1)">上一步</button>
+                        <button class="btn btn-primary" type="button" onclick="nextStep(3)">确认签署</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤3: 手机验证和人脸识别 -->
+        <div class="auth-step-content" id="step3" style="display:none;">
+            <div class="card">
+                <!-- 个人信息确认 -->
+                <div class="personal-info-section-mobile">
+                    <div class="info-title-mobile">请确认您的个人信息</div>
+                    <div class="info-card-mobile">
+                        <div class="info-item-mobile">
+                            <span class="info-label">证件类型：</span>
+                            <span class="info-value">居民身份证</span>
+                        </div>
+                        <div class="info-item-mobile">
+                            <span class="info-label">姓名：</span>
+                            <span class="info-value" id="summary_name_step3"></span>
+                        </div>
+                        <div class="info-item-mobile">
+                            <span class="info-label">证件号：</span>
+                            <span class="info-value" id="summary_idcard_step3"></span>
+                        </div>
+                        <div class="info-item-mobile">
+                            <span class="info-label">手机号：</span>
+                            <span class="info-value" id="summary_mobile_step3">{$user.mobile_masked|default=''}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cell">
+                    <div class="cell-hd">
+                        <label class="control-label">验证码</label>
+                    </div>
+                    <div class="cell-bd">
+                        <div class="verify-code-input-mobile">
+                            <input type="text" class="form-control" id="verify_code" name="verify_code" null="请输入验证码" placeholder="请输入6位验证码" reg="[0-9]{6}" data-input="clear">
+                            <button type="button" class="get-code-btn-mobile" onclick="sendVerifyCode()" id="send_code_btn">获取验证码</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cell">
+                    <div class="cell-bd">
+                        <div class="agreement-section-mobile">
+                            <label class="agreement-checkbox-mobile">
+                                <input type="checkbox" id="agree_final" name="agree_final">
+                                <span class="checkmark"></span>
+                                <span class="agreement-text">我已阅读并同意《易收卡用户协议》、《易收卡隐私政策》及《第三方个人信息共享清单》，并已了解相关数据会被传输至服务器中</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="myaction-wrapper">
+                <div class="myaction">
+                    <div class="btn-group">
+                        <button class="btn btn-default" type="button" onclick="prevStep(2)">上一步</button>
+                        {:token_field()}
+                        <button class="btn btn-success btn-large" type="submit" name="submitAuth" id="submit-btn">开始人脸识别</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 <style>
@@ -423,6 +427,58 @@
 	cursor: pointer;
 	color: #333;
 	line-height: 1.6;
+}
+
+
+/* 通用复选框样式 */
+.agreement-checkbox-mobile {
+  position: relative;
+  padding-left: 24px; /* 预留勾选框位置 */
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1.5;
+}
+
+.agreement-checkbox-mobile input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.agreement-checkbox-mobile .checkmark {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.agreement-checkbox-mobile input[type="checkbox"]:checked ~ .checkmark {
+  background-color: #20c997;
+  border-color: #20c997;
+}
+
+.agreement-checkbox-mobile .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.agreement-checkbox-mobile input[type="checkbox"]:checked ~ .checkmark:after {
+  display: block;
+}
+
+.agreement-checkbox-mobile .checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .agreement-checkbox-mobile input[type="checkbox"] {
@@ -812,525 +868,217 @@
 </style>
 
 <script>
-// 使用固定的MetaInfo（不依赖SDK）
-function getMetaInfo() {
+// ------- 步骤控制 -------
+let currentStep = 1;
+function setStepIndicator(from, to) {
+    const fromEl = document.querySelector(`.step-item[data-step="${from}"]`);
+    const toEl   = document.querySelector(`.step-item[data-step="${to}"]`);
+    if (fromEl) { fromEl.classList.remove('active'); fromEl.classList.add('completed'); }
+    if (toEl)   { toEl.classList.add('active'); }
+}
+function nextStep(targetStep) {
+    if (!validateStep(currentStep)) return;
+    document.getElementById('step' + currentStep).style.display = 'none';
+    document.getElementById('step' + targetStep).style.display = '';
+    setStepIndicator(currentStep, targetStep);
+
+    if (targetStep === 2) {
+        updateSignatoryInfo(); // 步骤2展示承诺人信息
+    } else if (targetStep === 3) {
+        updateStep3Summary();  // 步骤3展示摘要
+    }
+    currentStep = targetStep;
+}
+function prevStep(targetStep) {
+    document.getElementById('step' + currentStep).style.display = 'none';
+    document.getElementById('step' + targetStep).style.display = '';
+    const curEl = document.querySelector(`.step-item[data-step="${currentStep}"]`);
+    const toEl  = document.querySelector(`.step-item[data-step="${targetStep}"]`);
+    if (curEl) curEl.classList.remove('active');
+    if (toEl)  toEl.classList.add('active');
+    currentStep = targetStep;
+}
+
+// ------- 签名画布 -------
+let signatureData = '';
+function initSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+
+    function pos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        return {x,y};
+    }
+
+    function start(e){ e.preventDefault(); drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+    function move(e){ if(!drawing) return; const p = pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+    function end(){ drawing = false; signatureData = canvas.toDataURL('image/png'); document.getElementById('signatureInput').value = signatureData; }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('mouseleave', end);
+
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove',  move,  {passive:false});
+    canvas.addEventListener('touchend',   end);
+}
+function clearSignature(){
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    signatureData = '';
+    document.getElementById('signatureInput').value = '';
+}
+
+// ------- 表单校验 -------
+function validateStep(step){
+    if (step === 1){
+        const name   = document.getElementById('username').value.trim();
+        const idcard = document.getElementById('idcard').value.trim();
+        const agree1 = document.getElementById('agree_step1').checked;
+        if(!name || !idcard){ alert('请填写姓名和身份证号'); return false; }
+        const reg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+        if(!reg.test(idcard)){ alert('请输入正确的身份证号码'); return false; }
+        if(!agree1){ alert('请先勾选同意条款'); return false; }
+        return true;
+    }
+    if (step === 2){
+        if(!document.getElementById('agree_terms').checked){ alert('请先同意承诺书'); return false; }
+        if(!signatureData){ alert('请在签署区域内手写签名'); return false; }
+        return true;
+    }
+    if (step === 3){
+        // 这里验证码按需校验。调试时可以放宽。
+        const code = (document.getElementById('verify_code').value||'').trim();
+        if (!code || code.length !== 6){ alert('请输入6位验证码'); return false; }
+        if(!document.getElementById('agree_final').checked){ alert('请勾选同意协议'); return false; }
+        return true;
+    }
+    return true;
+}
+
+// ------- 信息填充 -------
+function updateSignatoryInfo(){
+    const name   = document.getElementById('username').value.trim();
+    const idcard = document.getElementById('idcard').value.trim();
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
+    document.getElementById('signatory_name').innerText   = name || '待填写';
+    document.getElementById('signatory_idcard').innerText = idcard || '待填写';
+    document.getElementById('signatory_date').innerText   = dateStr;
+}
+function maskName(s){ if(!s) return s; return s.length===2 ? s[0]+'*' : s[0] + '*'.repeat(Math.max(0,s.length-2)) + s.slice(-1); }
+function maskIdcard(s){ if(!s || s.length<8) return s; return s.slice(0,6) + '********' + s.slice(-4); }
+function updateStep3Summary(){
+    const name   = document.getElementById('username').value.trim();
+    const idcard = document.getElementById('idcard').value.trim();
+    document.getElementById('summary_name_step3').innerText   = maskName(name);
+    document.getElementById('summary_idcard_step3').innerText = maskIdcard(idcard);
+}
+
+// ------- 发送验证码（示例占位） -------
+function sendVerifyCode(){
+    const btn = document.getElementById('send_code_btn');
+    btn.disabled = true;
+    let sec = 60;
+    const t = setInterval(()=>{
+        sec--; btn.innerText = sec + '秒后重发';
+        if(sec<=0){ clearInterval(t); btn.disabled=false; btn.innerText='获取验证码'; }
+    },1000);
+    // TODO: 这里按你的接口调用发送短信
+}
+
+// ------- 获取 metaInfo（有SDK则用SDK；否则兜底） -------
+async function getMetaInfoSafe(){
+    try{
+        if (typeof getMetaInfo === 'function'){
+            const r = await getMetaInfo(); // 兼容你已集成的SDK
+            if (typeof r === 'string') return r;
+            return JSON.stringify(r);
+        }
+    }catch(e){ console.warn('SDK getMetaInfo 调用失败，使用兜底：', e); }
+    // 兜底，方便联调（正式上线请替换为SDK返回）
+    // 避免User Agent中的特殊字符触发安全过滤器
+    const safeUA = navigator.userAgent.replace(/[^a-zA-Z0-9\s\-\.\(\)\/]/g, '');
     return JSON.stringify({
-        apdidToken: "simulator",
-        appName: "test_h5", 
-        appVersion: "1.0",
-        bioMetaInfo: "web_demo",
-        deviceType: "h5"
+        deviceType: 'h5',
+        ua: safeUA,
+        bioMetaInfo: '4.1.0:2916352,0'
     });
 }
 
-console.log('使用固定MetaInfo，无需等待SDK加载');
-</script>
+// ------- 表单提交：调用后端初始化认证 -------
+document.getElementById('simpleAuthForm').addEventListener('submit', async function(e){
+    e.preventDefault();
 
-<script>
-let currentStep = 1;
-let signatureData = '';
+    if (!validateStep(3)) return;
 
-// 初始化签名画布
-function initSignature() {
-	const canvas = document.getElementById('signatureCanvas');
-	const ctx = canvas.getContext('2d');
-	let isDrawing = false;
-
-	// 设置画布样式
-	ctx.strokeStyle = '#000';
-	ctx.lineWidth = 2;
-	ctx.lineCap = 'round';
-
-	// 触摸事件支持
-	canvas.addEventListener('touchstart', handleTouch);
-	canvas.addEventListener('touchmove', handleTouch);
-	canvas.addEventListener('touchend', stopDrawing);
-
-	// 鼠标事件支持
-	canvas.addEventListener('mousedown', startDrawing);
-	canvas.addEventListener('mousemove', draw);
-	canvas.addEventListener('mouseup', stopDrawing);
-	canvas.addEventListener('mouseout', stopDrawing);
-
-	function handleTouch(e) {
-		e.preventDefault();
-		const touch = e.touches[0];
-		const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
-										  e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
-			clientX: touch.clientX,
-			clientY: touch.clientY
-		});
-		canvas.dispatchEvent(mouseEvent);
-	}
-
-	function startDrawing(e) {
-		isDrawing = true;
-		const rect = canvas.getBoundingClientRect();
-		ctx.beginPath();
-		ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-	}
-
-	function draw(e) {
-		if (!isDrawing) return;
-		const rect = canvas.getBoundingClientRect();
-		ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-		ctx.stroke();
-	}
-
-	function stopDrawing() {
-		isDrawing = false;
-		signatureData = canvas.toDataURL();
-	}
-}
-
-function nextStep(step) {
-	if (validateCurrentStep()) {
-		if (step === 2) {
-			// 步骤2：签署承诺书，更新承诺人信息
-			updateSignatoryInfo();
-		} else if (step === 3) {
-		// 步骤3：手机验证，显示个人信息摘要
-		updateStep3Summary();
-		updateSignatoryInfo();
-		} else if (step === 4) {
-			// 步骤4：人脸识别，显示完整信息摘要
-			updateSummary();
-		}
-		
-		document.getElementById('step' + currentStep).style.display = 'none';
-		document.getElementById('step' + step).style.display = 'block';
-		
-		// 更新步骤指示器
-		document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
-		document.querySelector(`[data-step="${currentStep}"]`).classList.add('completed');
-		document.querySelector(`[data-step="${step}"]`).classList.add('active');
-		
-		currentStep = step;
-	}
-}
-
-function prevStep(step) {
-	document.getElementById('step' + currentStep).style.display = 'none';
-	document.getElementById('step' + step).style.display = 'block';
-	
-	// 更新步骤指示器
-	document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
-	document.querySelector(`[data-step="${step}"]`).classList.add('active');
-	
-	currentStep = step;
-}
-
-function validateCurrentStep() {
-	if (currentStep === 1) {
-		const username = document.getElementById('username').value;
-		const idcard = document.getElementById('idcard').value;
-		const agreeStep1 = document.getElementById('agree_step1').checked;
-		
-		if (!username || !idcard) {
-			alert('请填写完整信息');
-			return false;
-		}
-		
-		// 简单的身份证验证
-		const idcardReg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
-		if (!idcardReg.test(idcard)) {
-			alert('请输入正确的身份证号码');
-			return false;
-		}
-		
-		if (!agreeStep1) {
-			alert('请先同意相关条款');
-			return false;
-		}
-	} else if (currentStep === 2) {
-		if (!document.getElementById('agree_terms').checked) {
-			alert('请先同意承诺书内容');
-			return false;
-		}
-		
-		if (!signatureData) {
-			alert('请进行电子签名');
-			return false;
-		}
-	} else if (currentStep === 3) {
-		const mobile = document.getElementById('mobile').value;
-		const verifyCode = document.getElementById('verify_code').value;
-		
-		if (!mobile) {
-			alert('请输入手机号码');
-			return false;
-		}
-		
-		// 手机号验证
-		const mobileReg = /^1[3-9]\d{9}$/;
-		if (!mobileReg.test(mobile)) {
-			alert('请输入正确的手机号码');
-			return false;
-		}
-		
-		if (!verifyCode || verifyCode.length !== 6) {
-			// 暂时跳过验证码校验
-			// alert('请输入6位验证码');
-			// return false;
-		}
-	}
-	
-	return true;
-}
-
-function sendVerifyCode() {
-	const mobile = document.getElementById('mobile').value;
-	const btn = document.getElementById('send_code_btn');
-	
-	// 这里应该调用发送验证码的API
-	// 暂时模拟发送成功
-	btn.textContent = '60秒后重发';
-	btn.style.pointerEvents = 'none';
-	
-	let countdown = 60;
-	const timer = setInterval(() => {
-		countdown--;
-		btn.textContent = countdown + '秒后重发';
-		
-		if (countdown <= 0) {
-			clearInterval(timer);
-			btn.textContent = '重新获取';
-			btn.style.pointerEvents = 'auto';
-		}
-	}, 1000);
-}
-
-function clearSignature() {
-	const canvas = document.getElementById('signatureCanvas');
-	const ctx = canvas.getContext('2d');
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	signatureData = '';
-}
-
-function updateStep3Summary() {
-	const username = document.getElementById('username').value;
-	const idcard = document.getElementById('idcard').value;
-	
-	// 姓名隐私保护
-	const maskedName = maskName(username);
-	document.getElementById('summary_name_step3').textContent = maskedName;
-	
-	// 身份证号隐私保护
-	const maskedIdCard = maskIdCard(idcard);
-	document.getElementById('summary_idcard_step3').textContent = maskedIdCard;
-	
-	// 手机号直接从模板获取，不需要动态更新
-}
-
-// 姓名隐私保护
-function maskName(name) {
-	if (!name || name.length < 2) {
-		return name;
-	}
-	if (name.length === 2) {
-		return name.charAt(0) + '*';
-	} else {
-		return name.charAt(0) + '*'.repeat(name.length - 2) + name.charAt(name.length - 1);
-	}
-}
-
-// 身份证号隐私保护
-function maskIdCard(idcard) {
-	if (!idcard || idcard.length < 8) {
-		return idcard;
-	}
-	return idcard.substring(0, 6) + '********' + idcard.substring(idcard.length - 4);
-}
-
-// 更新承诺人信息
-function updateSignatoryInfo() {
-	const username = document.getElementById('username').value;
-	const idcard = document.getElementById('idcard').value;
-	
-	// 获取当前日期，格式：2024年12月19日
-	const now = new Date();
-	const year = now.getFullYear();
-	const month = String(now.getMonth() + 1).padStart(2, '0');
-	const day = String(now.getDate()).padStart(2, '0');
-	const currentDate = `${year}年${month}月${day}日`;
-	
-	// 更新承诺人信息
-	document.getElementById('signatory_name').textContent = username || '待填写';
-	document.getElementById('signatory_idcard').textContent = idcard || '待填写';
-	document.getElementById('signatory_date').textContent = currentDate;
-}
-
-function updateSummary() {
-	document.getElementById('summary_name').textContent = document.getElementById('username').value;
-	document.getElementById('summary_idcard').textContent = document.getElementById('idcard').value;
-	document.getElementById('summary_mobile').textContent = document.getElementById('mobile').value;
-}
-
-// 人脸识别相关函数
-let stream = null;
-let faceImageData = '';
-let currentAction = 0;
-let livenessActions = [
-	{ icon: '👁️', text: '请眨眼', duration: 3000 },
-	{ icon: '↔️', text: '请摇头', duration: 3000 },
-	{ icon: '😮', text: '请张嘴', duration: 3000 }
-];
-
-function startFaceRecognition() {
-	const video = document.getElementById('video');
-	const facePreview = document.getElementById('face-preview');
-	const startBtn = document.getElementById('start-face-btn');
-	const captureBtn = document.getElementById('capture-btn');
-	
-	navigator.mediaDevices.getUserMedia({ video: true })
-		.then(function(mediaStream) {
-			stream = mediaStream;
-			video.srcObject = stream;
-			video.style.display = 'block';
-			facePreview.style.display = 'none';
-			startBtn.style.display = 'none';
-			
-			// 开始活体检测流程
-			startLivenessDetection();
-		})
-		.catch(function(err) {
-			alert('无法访问摄像头，请检查权限设置');
-			console.error('摄像头访问错误:', err);
-		});
-}
-
-function startLivenessDetection() {
-	// 显示活体检测提示
-	document.getElementById('liveness-tips').style.display = 'flex';
-	
-	// 开始第一个动作
-	performLivenessAction(0);
-}
-
-function performLivenessAction(actionIndex) {
-	if (actionIndex >= livenessActions.length) {
-		// 所有动作完成，可以拍照
-		completeLivenessDetection();
-		return;
-	}
-	
-	const action = livenessActions[actionIndex];
-	const actionStep = document.getElementById('action-step');
-	const progressFill = document.getElementById('progress-fill');
-	
-	// 更新动作提示
-	actionStep.innerHTML = `
-		<div class="action-icon-mobile">${action.icon}</div>
-		<div class="action-text-mobile">${action.text}</div>
-	`;
-	
-	// 重置进度条
-	progressFill.style.width = '0%';
-	
-	// 开始进度动画
-	let progress = 0;
-	const progressInterval = setInterval(() => {
-		progress += 2;
-		progressFill.style.width = progress + '%';
-		
-		if (progress >= 100) {
-			clearInterval(progressInterval);
-			// 当前动作完成，进行下一个
-			setTimeout(() => {
-				performLivenessAction(actionIndex + 1);
-			}, 500);
-		}
-	}, action.duration / 50);
-}
-
-function completeLivenessDetection() {
-	// 隐藏活体检测提示
-	document.getElementById('liveness-tips').style.display = 'none';
-	
-	// 显示拍照按钮
-	document.getElementById('capture-btn').style.display = 'inline-block';
-}
-
-function captureFace() {
-	const video = document.getElementById('video');
-	const canvas = document.getElementById('canvas');
-	const ctx = canvas.getContext('2d');
-	
-	// 绘制当前视频帧到canvas
-	ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-	
-	// 获取图像数据
-	faceImageData = canvas.toDataURL('image/jpeg', 0.8);
-	
-	// 停止摄像头
-	if (stream) {
-		stream.getTracks().forEach(track => track.stop());
-	}
-	
-	// 显示捕获的图像
-	const facePreview = document.getElementById('face-preview');
-	facePreview.innerHTML = '<img src="' + faceImageData + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">';
-	facePreview.style.display = 'flex';
-	
-	// 隐藏视频，显示按钮
-	video.style.display = 'none';
-	document.getElementById('capture-btn').style.display = 'none';
-	document.getElementById('retry-btn').style.display = 'inline-block';
-	document.getElementById('submit-btn').style.display = 'inline-block';
-}
-
-function retryFaceRecognition() {
-	// 重置状态
-	faceImageData = '';
-	document.getElementById('face-preview').innerHTML = `
-		<div class="face-guide">
-			<i class="iconfont" style="font-size: 48px; color: #007bff;">&#xe61c;</i>
-			<p>点击开始人脸识别</p>
-		</div>
-	`;
-	document.getElementById('retry-btn').style.display = 'none';
-	document.getElementById('submit-btn').style.display = 'none';
-	document.getElementById('start-face-btn').style.display = 'inline-block';
-}
-
-// 验证所有步骤
-function validateAllSteps() {
-	// 验证步骤1
-	const username = document.getElementById('username').value;
-	const idcard = document.getElementById('idcard').value;
-	const agreeStep1 = document.getElementById('agree_step1').checked;
-	
-	if (!username || !idcard) {
-		alert('请填写完整信息');
-		return false;
-	}
-	
-	// 简单的身份证验证
-	const idcardReg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
-	if (!idcardReg.test(idcard)) {
-		alert('请输入正确的身份证号码');
-		return false;
-	}
-	
-	if (!agreeStep1) {
-		alert('请先同意相关条款');
-		return false;
-	}
-	
-	// 验证步骤2
-	if (!document.getElementById('agree_terms').checked) {
-		alert('请先同意承诺书内容');
-		return false;
-	}
-	
-	if (!signatureData) {
-		alert('请进行电子签名');
-		return false;
-	}
-	
-	// 验证步骤3
-	const mobile = document.getElementById('mobile').value;
-	const verifyCode = document.getElementById('verify_code').value;
-	
-	if (!mobile) {
-		alert('请输入手机号码');
-		return false;
-	}
-	
-	// 手机号验证
-	const mobileReg = /^1[3-9]\d{9}$/;
-	if (!mobileReg.test(mobile)) {
-		alert('请输入正确的手机号码');
-		return false;
-	}
-	
-	if (!verifyCode || verifyCode.length !== 6) {
-		alert('请输入6位验证码');
-		return false;
-	}
-	
-	return true;
-}
-
-// 表单提交处理
-document.getElementById('simpleAuthForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // 阻止默认提交
-    
-    // 验证所有步骤
-    if (!validateAllSteps()) {
-        return false;
-    }
-    
-    // 获取表单数据
-    const formData = {
-        name: document.getElementById('username').value,
-        idcard: document.getElementById('idcard').value,
-        mobile: document.getElementById('mobile').value,
-        signature: signatureData
-    };
-    
-    // 获取阿里云metaInfo
-    if (typeof getMetaInfo === 'function') {
-        try {
-            formData.metaInfo = getMetaInfo();
-            console.log('获取到metaInfo:', formData.metaInfo);
-        } catch (error) {
-            console.error('获取metaInfo失败:', error);
-            alert('获取设备信息失败，请重试');
-            return false;
-        }
-    } else {
-        console.error('getMetaInfo函数不存在，请检查阿里云SDK是否正确加载');
-        // 暂时使用模拟的metaInfo进行测试
-        formData.metaInfo = '{"authType":"1","authMode":"1"}';
-        console.log('使用模拟metaInfo:', formData.metaInfo);
-        console.log('注意：当前使用模拟数据进行测试，实际部署时需要正确的阿里云SDK');
-    }
-    
-    // 显示加载状态
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
-    submitBtn.textContent = '获取认证链接中...';
-    
-    // 调用后端API获取认证链接
-    fetch('/index.php?s=/SimpleAuth/initFaceVerify', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('API响应:', data);
-        
-        if (data.code === 0 && data.certifyUrl) {
-            // 跳转到阿里云认证页面
-            console.log('跳转到认证页面:', data.certifyUrl);
-            window.location.href = data.certifyUrl;
-        } else {
-            // 显示错误信息
-            alert(
-                '获取认证链接失败: ' +
-                (data.aliyunMessage || data.msg || '未知错误') +
-                (data.aliyunCode ? (' [' + data.aliyunCode + ']') : '')
-            );
-            submitBtn.disabled = false;
-            submitBtn.textContent = '提交认证';
-        }
-    })
-    .catch(error => {
-        console.error('请求失败:', error);
-        alert('网络错误，请重试');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '提交认证';
+    submitBtn.innerText = '获取认证链接中...';
+
+    const name   = document.getElementById('username').value.trim();
+    const idcard = document.getElementById('idcard').value.trim();
+    const signature = signatureData || document.getElementById('signatureInput').value || '';
+    const metaInfo = await getMetaInfoSafe();
+
+    // 用 x-www-form-urlencoded 便于 ThinkPHP 直接 $request->post() 读取
+    const formBody = new URLSearchParams({
+        name, idcard,
+        metaInfo,              // 后端会自动识别字符串
+        signature              // 业务自存留底，可选
     });
+
+    // 使用能正常工作的路由
+    const endpoints = [
+        '/SimpleAuth/initFaceVerify'
+    ];
+
+    let ok = false, lastErr = null;
+
+    for (const url of endpoints){
+        try{
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Accept': 'application/json; charset=UTF-8'
+                },
+                body: formBody.toString()
+            });
+            const data = await res.json();
+            if (data && data.code === 0 && data.certifyUrl){
+                window.location.href = data.certifyUrl;
+                ok = true; break;
+            }else{
+                lastErr = data;
+            }
+        }catch(ex){
+            lastErr = ex;
+        }
+    }
+
+    if (!ok){
+        const errorMsg = lastErr?.aliyunMessage || lastErr?.msg || lastErr?.message || '未知错误';
+        alert('获取认证链接失败：' + errorMsg);
+        submitBtn.disabled = false;
+        submitBtn.innerText = '开始人脸识别';
+    }
 });
 
-// 页面加载完成后初始化签名功能
-document.addEventListener('DOMContentLoaded', function() {
-	initSignature();
+// ------- 初始化 -------
+document.addEventListener('DOMContentLoaded', function(){
+    initSignature();
+    // 进入页面时把承诺人信息先填一遍（空值则显示“待填写”）
+    updateSignatoryInfo();
 });
 </script>
-</body>
-</html>

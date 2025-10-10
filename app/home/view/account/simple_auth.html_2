@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+        <!--   引入该JS，全局注入getMetaInfo方法   -->
+    <script type="text/javascript" src="https://o.alicdn.com/yd-cloudauth/cloudauth-cdn/jsvm_all.js" ></script>
+  </head>
+  <body>
+  <div></div>
+    <script>
+    // 在调用实人认证服务端发起认证请求时需要传入该MetaInfo值
+    let MetaInfo = window.getMetaInfo();
+
+    // 请求认证业务接口获取CertifyUrl
+    fetch('https://www.ssyd.fun/faceauth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"metaInfo":MetaInfo,"certName":"石岩","certNo":"140724199409240052","returnUrl":"www.fnji.com222"})
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('data:', data)
+        // 获取CertifyUrl后跳转至认证页面
+        window.location.href = data.data.result.ResultObject.CertifyUrl;
+      });
+    </script>
+  </body>
+</html>
+            

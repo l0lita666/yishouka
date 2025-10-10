@@ -46,4 +46,19 @@ class User extends Model
         return $this->belongsTo("userAuth", 'shopid','shopid');
     }
     
+    /**
+     * 获取脱敏手机号
+     */
+    public function getMobileMaskedAttr($value, $data)
+    {
+        if (empty($data['mobile'])) {
+            return '';
+        }
+        $mobile = $data['mobile'];
+        if (strlen($mobile) == 11) {
+            return substr($mobile, 0, 3) . '****' . substr($mobile, 7);
+        }
+        return $mobile;
+    }
+    
 }

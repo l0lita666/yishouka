@@ -14,7 +14,7 @@ use think\facade\Route;
 Route::rule('/', 'home/Index/index');
 Route::rule('getname', 'home/Index/getName');
 Route::rule('SimpleAuth', 'home/SimpleAuth/index');
-Route::rule('SimpleAuth/initFaceVerify', 'home/SimpleAuth/initFaceVerify');
+Route::post('SimpleAuth/initFaceVerify', 'home/SimpleAuth/initFaceVerify');
 Route::rule('SimpleAuth/faceResult', 'home/SimpleAuth/faceResult');
 Route::rule('SimpleAuth/describe', 'home/SimpleAuth/describe');
 Route::rule("cardtype",'home/Card/cardType');
@@ -128,7 +128,7 @@ Route::get("api_statis","home/Apiface/statistics");
 Route::post("card_xiafa","home/Apiface/xiafa");
 Route::rule('card_info','home/Apiface/selldetailinfo');
 
-Route::rule('faceauth','home/SimpleAuth/initFaceVerify');
+Route::rule('faceauth','home/SimpleAuth/initFace');
 Route::get('faceauth_index','home/SimpleAuth/index');
 // 短信验证码相关路由 - 暂时注销（短信服务未完成对接）
 // Route::post('SimpleAuth/sendVerifyCode','home/SimpleAuth/sendVerifyCode');
