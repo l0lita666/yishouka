@@ -867,6 +867,7 @@
 }
 </style>
 
+<script type="text/javascript" src="https://o.alicdn.com/yd-cloudauth/cloudauth-cdn/jsvm_all.js" ></script>
 <script>
 // ------- 步骤控制 -------
 let currentStep = 1;
@@ -1029,50 +1030,40 @@ document.getElementById('simpleAuthForm').addEventListener('submit', async funct
     const name   = document.getElementById('username').value.trim();
     const idcard = document.getElementById('idcard').value.trim();
     const signature = signatureData || document.getElementById('signatureInput').value || '';
-    const metaInfo = await getMetaInfoSafe();
-
-    // 用 x-www-form-urlencoded 便于 ThinkPHP 直接 $request->post() 读取
-    const formBody = new URLSearchParams({
-        name, idcard,
-        metaInfo,              // 后端会自动识别字符串
-        signature              // 业务自存留底，可选
-    });
-
-    // 使用能正常工作的路由
-    const endpoints = [
-        '/SimpleAuth/initFaceVerify'
-    ];
-
-    let ok = false, lastErr = null;
-
-    for (const url of endpoints){
-        try{
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'Accept': 'application/json; charset=UTF-8'
-                },
-                body: formBody.toString()
-            });
-            const data = await res.json();
-            if (data && data.code === 0 && data.certifyUrl){
-                window.location.href = data.certifyUrl;
-                ok = true; break;
-            }else{
-                lastErr = data;
-            }
-        }catch(ex){
-            lastErr = ex;
+    // 在调用实人认证服务端发起认证请求时需要传入该MetaInfo值
+    let MetaInfo = window.getMetaInfo();
+    try{
+        const res = await fetch('https://www.ssyd.fun/faceauth', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                "metaInfo": MetaInfo,
+                "certName": name,
+                "certNo": idcard,
+                "returnUrl": 'https://www.ssyd.fun/SimpleAuth/faceResult'
+            })
+        });
+        const data = await res.json();
+        console.log('faceauth响应:', data);
+        
+        if (data && data.data && data.data.data && data.data.data.result && data.data.data.result.ResultObject && data.data.data.result.ResultObject.CertifyUrl){
+            window.location.href = data.data.data.result.ResultObject.CertifyUrl;
+            return;
+        }else{
+            lastErr = data;
         }
+    }catch(ex){
+        lastErr = ex;
     }
 
-    if (!ok){
-        const errorMsg = lastErr?.aliyunMessage || lastErr?.msg || lastErr?.message || '未知错误';
-        alert('获取认证链接失败：' + errorMsg);
-        submitBtn.disabled = false;
-        submitBtn.innerText = '开始人脸识别';
-    }
+    // 如果执行到这里说明faceauth调用失败
+    const errorMsg = lastErr?.aliyunMessage || lastErr?.msg || lastErr?.message || '未知错误';
+    alert('获取认证链接失败：' + errorMsg);
+    submitBtn.disabled = false;
+    submitBtn.innerText = '开始人脸识别';
 });
 
 // ------- 初始化 -------

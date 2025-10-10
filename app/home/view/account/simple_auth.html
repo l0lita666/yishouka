@@ -1279,69 +1279,61 @@ document.getElementById('simpleAuthForm').addEventListener('submit', function(e)
     
     // 获取表单数据
     const formData = {
-        name: document.getElementById('username').value,
+        username: document.getElementById('username').value,
         idcard: document.getElementById('idcard').value,
         mobile: document.getElementById('mobile').value,
-        signature: signatureData
+        signature: signatureData,
+        agree_step1: document.getElementById('agree_step1').checked,
+        agree_terms: document.getElementById('agree_terms').checked,
+        verify_code: document.getElementById('verify_code').value
     };
-    
-    // 获取阿里云metaInfo
-    if (typeof getMetaInfo === 'function') {
-        try {
-            formData.metaInfo = getMetaInfo();
-            console.log('获取到metaInfo:', formData.metaInfo);
-        } catch (error) {
-            console.error('获取metaInfo失败:', error);
-            alert('获取设备信息失败，请重试');
-            return false;
-        }
-    } else {
-        console.error('getMetaInfo函数不存在，请检查阿里云SDK是否正确加载');
-        // 暂时使用模拟的metaInfo进行测试
-        formData.metaInfo = '{"authType":"1","authMode":"1"}';
-        console.log('使用模拟metaInfo:', formData.metaInfo);
-        console.log('注意：当前使用模拟数据进行测试，实际部署时需要正确的阿里云SDK');
-    }
     
     // 显示加载状态
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
     submitBtn.textContent = '获取认证链接中...';
     
-    // 调用后端API获取认证链接
-    fetch('/index.php?s=/SimpleAuth/initFaceVerify', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('API响应:', data);
-        
-        if (data.code === 0 && data.certifyUrl) {
-            // 跳转到阿里云认证页面
-            console.log('跳转到认证页面:', data.certifyUrl);
-            window.location.href = data.certifyUrl;
-        } else {
-            // 显示错误信息
-            alert(
-                '获取认证链接失败: ' +
-                (data.aliyunMessage || data.msg || '未知错误') +
-                (data.aliyunCode ? (' [' + data.aliyunCode + ']') : '')
-            );
-            submitBtn.disabled = false;
-            submitBtn.textContent = '提交认证';
-        }
-    })
-    .catch(error => {
-        console.error('请求失败:', error);
-        alert('网络错误，请重试');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '提交认证';
-    });
+    // 直接开始人脸识别，跳过submit步骤
+    startFaceVerification();
 });
+
+// 开始人脸识别 - 完全按照simple_auth1.html的代码
+function startFaceVerification() {
+    // 获取表单数据
+    const username = document.getElementById('username').value;
+    const idcard = document.getElementById('idcard').value;
+    
+    // 在调用实人认证服务端发起认证请求时需要传入该MetaInfo值
+    let MetaInfo = window.getMetaInfo();
+    console.log('MetaInfo:', MetaInfo);
+
+     请求认证业务接口获取CertifyUrl
+     fetch('https://www.ssyd.fun/faceauth', {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({
+             "metaInfo": MetaInfo,
+             "certName": username,
+             "certNo": idcard,
+             "returnUrl": window.location.origin + '/index.php?s=/SimpleAuth/faceResult'
+         })
+     })
+     .then(response => response.json())
+     .then(data => {
+         console.log('data:', data);
+         // 获取CertifyUrl后跳转至认证页面
+         window.location.href = data.data.result.ResultObject.CertifyUrl;
+     })
+     .catch(error => {
+         console.error('人脸识别请求失败:', error);
+         alert('网络错误，请重试');
+         const submitBtn = document.getElementById('submit-btn');
+         submitBtn.disabled = false;
+         submitBtn.textContent = '提交认证';
+     });
+}
 
 // 页面加载完成后初始化签名功能
 document.addEventListener('DOMContentLoaded', function() {

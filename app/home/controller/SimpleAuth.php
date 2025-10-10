@@ -30,9 +30,9 @@ class SimpleAuth extends IndexBase
     public function index()
     {
 		
-		//  return view('account/simple_auth',[
-        //         'title'=>"实名认证",
-        //     ]);
+		  // return view('account/simple_auth',[
+                 // 'title'=>"实名认证",
+             // ]);
 			
         // 获取真实用户登录数据
         $user = session('user_auth');
@@ -85,10 +85,20 @@ class SimpleAuth extends IndexBase
      */
     public  function createClient(){
         $credential = new Credential();
+        
+        // 调试：输出AccessKey信息（生产环境请删除）
+        $accessKeyId = env('ALIYUN.AK', '');
+        $accessKeySecret = env('ALIYUN.SK', '');
+        
+        // 调试输出（生产环境请删除）
+        if (config('app.app_debug')) {
+            trace('AccessKey ID: ' . substr($accessKeyId, 0, 8) . '...', 'debug');
+        }
+        
         $config = new Config([
-            "credential" => $credential,
-			"accessKeyId" => env('ALIYUN_ACCESS_KEY_ID', ''),
-			"accessKeySecret" => env('ALIYUN_ACCESS_KEY_SECRET', ''),
+            //"credential" => $credential,
+			"accessKeyId" => $accessKeyId,
+			"accessKeySecret" => $accessKeySecret,
         ]);
         $config->endpoint = "cloudauth.aliyuncs.com";
         return new Cloudauth($config);
@@ -101,7 +111,16 @@ class SimpleAuth extends IndexBase
      */
     public function initFace(Request $request): Response
     {
-        $params = $request->post();
+        // 处理JSON请求
+        if (stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
+            $raw = file_get_contents('php://input');
+            $params = json_decode($raw, true);
+            if (!is_array($params)) {
+                return json(['code' => 400, 'msg' => 'JSON格式错误']);
+            }
+        } else {
+            $params = $request->post();
+        }
 
         // 校验必填参数
         $required = [ 'certName', 'certNo', 'metaInfo', 'returnUrl'];
@@ -116,7 +135,7 @@ class SimpleAuth extends IndexBase
             'sceneId'      => 1000015222,
             'outerOrderNo' => time().rand(1,100),
             'productCode'  => "ID_PRO",
-			'userId' =>1,
+			'userId' =>2333,
             'model'        => $params['model'] ?? 'LIVENESS',
             'certType'     => $params['certType'] ?? 'IDENTITY_CARD',
             'certName'     => $params['certName'],
@@ -144,10 +163,15 @@ class SimpleAuth extends IndexBase
 					'code' => 200,
 					'msg'  => '初始化成功',
 					'data' => [
-						'certifyId' => $body->resultObject->certifyId ?? null,
-						'certifyUrl'=> $body->resultObject->certifyUrl ?? null,
-						'requestId' => $body->requestId ?? '',
-						'result'    => $body->toMap(), // 可以转数组
+						'data' => [
+							'result' => [
+								'ResultObject' => [
+									'CertifyId' => $body->resultObject->certifyId ?? null,
+									'CertifyUrl' => $body->resultObject->certifyUrl ?? null,
+								],
+								'RequestId' => $body->requestId ?? '',
+							]
+						]
 					]
 				]);
 
@@ -327,22 +351,32 @@ class SimpleAuth extends IndexBase
                 return json(['code' => -1, 'msg' => '用户会话已过期，请重新登录']);
             }
             
-            $name     = trim($request->post('name', ''));
-            $idcard   = trim($request->post('idcard', ''));
-            $metaInfo = $request->post('metaInfo', '');
-
-// 兼容 application/json 直传
-if (($name === '' || $idcard === '' || $metaInfo === '') && stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
-    $raw = file_get_contents('php://input');
-    $j = json_decode($raw, true);
-    if (is_array($j)) {
-        $name     = isset($j['name']) ? trim($j['name']) : $name;
-        $idcard   = isset($j['idcard']) ? trim($j['idcard']) : $idcard;
-        $metaInfo = $j['metaInfo'] ?? $metaInfo;
-    }
-}// 参数验证 - 使用IDENTITY_CARD时，姓名和身份证号都必填
+            // 处理JSON格式的请求（兼容simple_auth1.html的调用方式）
+            if (stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
+                $raw = file_get_contents('php://input');
+                $j = json_decode($raw, true);
+                if (is_array($j)) {
+                    $name = isset($j['certName']) ? trim($j['certName']) : '';
+                    $idcard = isset($j['certNo']) ? trim($j['certNo']) : '';
+                    $metaInfo = $j['metaInfo'] ?? '';
+                    $returnUrl = $j['returnUrl'] ?? '';
+                }
+            } else {
+                // 优先从数据库获取已保存的认证信息
+                $auth = \app\common\model\UserAuth::where('user_id', $user['user_id'])->find();
+                if (!$auth || $auth->status != 0) {
+                    return json(['code' => -1, 'msg' => '请先完成认证信息提交']);
+                }
+                
+                $name = $auth->real_name;
+                $idcard = $auth->id_card;
+                $metaInfo = $request->post('metaInfo', '');
+                $returnUrl = '';
+            }
+            
+            // 参数验证 - 使用IDENTITY_CARD时，姓名和身份证号都必填
             if ($name === '' || $idcard === '') {
-                return json(['code' => -1, 'msg' => '参数缺失：使用身份证认证时，name和idcard都必填']);
+                return json(['code' => -1, 'msg' => '参数缺失：使用身份证认证时，姓名和身份证号都必填']);
             }
             
             // MetaInfo处理 - 根据阿里云文档，MetaInfo必须实时获取
@@ -380,7 +414,7 @@ if (($name === '' || $idcard === '' || $metaInfo === '') && stripos($_SERVER['CO
             $region  = $this->cfg('ALIYUN_REGION', 'cn-hangzhou');
             $product = $this->cfg('ALIYUN_PRODUCT', 'PV_FV');  // 金融级实人认证
             $sceneId = $this->cfg('ALIYUN_SCENE_ID');
-            $return  = $this->cfg('ALIYUN_RETURN_URL', url('home/SimpleAuth/faceResult', [], true, true));
+            $return  = !empty($returnUrl) ? $returnUrl : $this->cfg('ALIYUN_RETURN_URL', url('home/SimpleAuth/faceResult', [], true, true));
             $ossBucket = $this->cfg('ALIYUN_OSS_BUCKET');
             $ossObject = $this->cfg('ALIYUN_OSS_OBJECT');
     
@@ -457,11 +491,32 @@ if (($name === '' || $idcard === '' || $metaInfo === '') && stripos($_SERVER['CO
     
             // 检查API调用是否成功
             if (($data['Code'] ?? '') === 'Success' && !empty($data['ResultObject'])) {
+                $certifyId = $data['ResultObject']['CertifyId'] ?? '';
+                $certifyUrl = $data['ResultObject']['CertifyUrl'] ?? '';
+                
+                // 更新数据库中的认证记录，保存certifyId和outerOrderNo
+                if ($certifyId) {
+                    // 如果是JSON请求，需要查找对应的认证记录
+                    if (stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
+                        $auth = \app\common\model\UserAuth::where('user_id', $user['user_id'])
+                            ->where('real_name', $name)
+                            ->where('id_card', $idcard)
+                            ->find();
+                    }
+                    
+                    if ($auth) {
+                        $auth->certify_id = $certifyId;
+                        $auth->outer_order = $outerOrderNo;
+                        $auth->updated_at = date('Y-m-d H:i:s');
+                        $auth->save();
+                    }
+                }
+                
                 return json([
                     'code' => 0,
                     'msg' => 'ok',
-                    'certifyId'  => $data['ResultObject']['CertifyId'] ?? '',
-                    'certifyUrl' => $data['ResultObject']['CertifyUrl'] ?? '',
+                    'certifyId'  => $certifyId,
+                    'certifyUrl' => $certifyUrl,
                     'outerOrder' => $outerOrderNo,
                 ], 200, [], ['Content-Type' => 'application/json; charset=UTF-8']);
             }
@@ -515,6 +570,39 @@ if (($name === '' || $idcard === '' || $metaInfo === '') && stripos($_SERVER['CO
                 'rawResponse' => $response
             ];
             
+            // 判断认证是否通过
+            $passed = ($authResult['code'] === '200' || $authResult['code'] === 'success');
+            
+            // 更新数据库中的认证状态
+            if ($certifyId) {
+                $auth = \app\common\model\UserAuth::where('certify_id', $certifyId)->find();
+                if (!$auth) {
+                    // 如果没有找到对应的认证记录，尝试通过outerOrder查找
+                    $auth = \app\common\model\UserAuth::where('outer_order', $outerOrder)->find();
+                }
+                
+                if ($auth) {
+                    $auth->status = $passed ? 1 : 2; // 1=通过，2=失败
+                    $auth->face_result = json_encode($authResult, JSON_UNESCAPED_UNICODE);
+                    $auth->certify_id = $certifyId;
+                    $auth->outer_order = $outerOrder;
+                    $auth->updated_at = date('Y-m-d H:i:s');
+                    $auth->save();
+                    
+                    // 如果认证通过，更新用户表
+                    if ($passed) {
+                        $user = \app\common\model\User::find($auth->user_id);
+                        if ($user) {
+                            $user->real_name = $auth->real_name;
+                            $user->id_card = $auth->id_card;
+                            $user->mobile = $auth->mobile;
+                            $user->auth_status = 1;
+                            $user->save();
+                        }
+                    }
+                }
+            }
+            
             // 记录认证结果日志
             error_log("Face Auth Result: " . json_encode($authResult, JSON_UNESCAPED_UNICODE));
             
@@ -523,7 +611,10 @@ if (($name === '' || $idcard === '' || $metaInfo === '') && stripos($_SERVER['CO
                 'code' => 0,
                 'msg' => '认证结果获取成功',
                 'action' => $this->request->action(),
-                'data' => $authResult
+                'data' => array_merge($authResult, [
+                    'passed' => $passed,
+                    'status' => $passed ? '认证通过' : '认证失败'
+                ])
             ], 200, [], ['Content-Type' => 'application/json; charset=UTF-8']);
             
         } catch (\Throwable $e) {
@@ -576,6 +667,174 @@ if (($name === '' || $idcard === '' || $metaInfo === '') && stripos($_SERVER['CO
         \think\facade\View::assign("C", array_merge($list, $wxapp));
         \think\facade\View::assign("contr", \think\facade\Request::controller());
         \think\facade\View::assign("action", \think\facade\Request::action());
+    }
+
+    /**
+     * 处理认证表单提交（3个步骤的验证）
+     */
+    public function submit(Request $request)
+    {
+        try {
+            // 检查用户登录状态
+            $user = session('user_auth');
+            if (!$user) {
+                return json(['code' => -1, 'msg' => '用户未登录，请先登录']);
+            }
+            
+            $data = $request->post();
+            
+            // 步骤1：验证基本信息
+            if (!$this->validateStep1($data)) {
+                return json(['code' => -1, 'msg' => '请填写完整的基本信息']);
+            }
+            
+            // 步骤2：验证承诺书签署
+            if (!$this->validateStep2($data)) {
+                return json(['code' => -1, 'msg' => '请完成承诺书签署']);
+            }
+            
+            // 步骤3：验证手机验证码
+            if (!$this->validateStep3($data)) {
+                return json(['code' => -1, 'msg' => '请完成手机验证']);
+            }
+            
+            // 保存认证数据到数据库
+            $authData = [
+                'user_id' => $user['user_id'],
+                'real_name' => $data['username'],
+                'id_card' => $data['idcard'],
+                'mobile' => $data['mobile'],
+                'signature' => $data['signature'],
+                'status' => 0, // 待人脸识别
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+            
+            // 检查是否已存在认证记录
+            $existingAuth = \app\common\model\UserAuth::where('user_id', $user['user_id'])->find();
+            if ($existingAuth) {
+                $existingAuth->save($authData);
+            } else {
+                \app\common\model\UserAuth::create($authData);
+            }
+            
+            return json([
+                'code' => 0,
+                'msg' => '认证信息提交成功，即将进行人脸识别',
+                'data' => [
+                    'next_step' => 'face_verify',
+                    'user_id' => $user['user_id']
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return json(['code' => -500, 'msg' => '提交失败：' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * 验证步骤1：基本信息
+     */
+    private function validateStep1($data)
+    {
+        // 验证姓名
+        if (empty($data['username']) || !preg_match('/^[\x{4e00}-\x{9fa5}]{2,10}$/u', $data['username'])) {
+            return false;
+        }
+        
+        // 验证身份证号
+        if (empty($data['idcard']) || !preg_match('/^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/', $data['idcard'])) {
+            return false;
+        }
+        
+        // 验证是否同意条款
+        if (empty($data['agree_step1'])) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * 验证步骤2：承诺书签署
+     */
+    private function validateStep2($data)
+    {
+        // 验证是否同意承诺书
+        if (empty($data['agree_terms'])) {
+            return false;
+        }
+        
+        // 验证电子签名
+        if (empty($data['signature'])) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * 验证步骤3：手机验证
+     */
+    private function validateStep3($data)
+    {
+        // 验证手机号
+        if (empty($data['mobile']) || !preg_match('/^1[3-9]\d{9}$/', $data['mobile'])) {
+            return false;
+        }
+        
+        // 验证验证码（可选，根据业务需求）
+        if (!empty($data['verify_code']) && strlen($data['verify_code']) !== 6) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * 获取认证状态
+     */
+    public function getAuthStatus(Request $request)
+    {
+        try {
+            $user = session('user_auth');
+            if (!$user) {
+                return json(['code' => -1, 'msg' => '用户未登录']);
+            }
+            
+            $auth = \app\common\model\UserAuth::where('user_id', $user['user_id'])->find();
+            
+            if (!$auth) {
+                return json([
+                    'code' => 0,
+                    'msg' => '未开始认证',
+                    'data' => ['status' => 'not_started']
+                ]);
+            }
+            
+            $statusMap = [
+                0 => 'pending_face_verify',    // 待人脸识别
+                1 => 'passed',                 // 认证通过
+                2 => 'failed',                 // 认证失败
+                3 => 'pending_review'          // 待审核
+            ];
+            
+            return json([
+                'code' => 0,
+                'msg' => '获取状态成功',
+                'data' => [
+                    'status' => $statusMap[$auth->status] ?? 'unknown',
+                    'real_name' => $auth->real_name,
+                    'id_card' => $this->maskIdCard($auth->id_card),
+                    'mobile' => $this->maskMobile($auth->mobile),
+                    'created_at' => $auth->created_at,
+                    'updated_at' => $auth->updated_at
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return json(['code' => -500, 'msg' => '获取状态失败：' . $e->getMessage()]);
+        }
     }
 
     /**
