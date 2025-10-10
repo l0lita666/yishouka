@@ -87,8 +87,8 @@ class SimpleAuth extends IndexBase
         $credential = new Credential();
         $config = new Config([
             "credential" => $credential,
-			"accessKeyId" => "ENV_ALIYUN_ACCESS_KEY_ID",
-			"accessKeySecret" => "ENV_ALIYUN_ACCESS_KEY_SECRET",
+			"accessKeyId" => env('ALIYUN_ACCESS_KEY_ID', ''),
+			"accessKeySecret" => env('ALIYUN_ACCESS_KEY_SECRET', ''),
         ]);
         $config->endpoint = "cloudauth.aliyuncs.com";
         return new Cloudauth($config);
