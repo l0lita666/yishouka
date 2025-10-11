@@ -55,6 +55,8 @@ class SimpleAuth extends IndexBase
         $user['mobile_masked'] = $this->maskMobile($user['mobile'] ?? '');
         $user['idcard_masked'] = $this->maskIdCard('612401199208169417'); // 示例身份证号，实际应从用户数据获取
         
+        // 注意：userReal和apilib字段在实名认证页面中不需要使用，已从模板中移除相关代码
+        
         // 获取用户的实名认证数据（如果有的话）
         $da = [];
         if (!empty($user['userReal'])) {

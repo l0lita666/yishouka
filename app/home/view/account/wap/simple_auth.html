@@ -998,25 +998,6 @@ function sendVerifyCode(){
     // TODO: 这里按你的接口调用发送短信
 }
 
-// ------- 获取 metaInfo（有SDK则用SDK；否则兜底） -------
-async function getMetaInfoSafe(){
-    try{
-        if (typeof getMetaInfo === 'function'){
-            const r = await getMetaInfo(); // 兼容你已集成的SDK
-            if (typeof r === 'string') return r;
-            return JSON.stringify(r);
-        }
-    }catch(e){ console.warn('SDK getMetaInfo 调用失败，使用兜底：', e); }
-    // 兜底，方便联调（正式上线请替换为SDK返回）
-    // 避免User Agent中的特殊字符触发安全过滤器
-    const safeUA = navigator.userAgent.replace(/[^a-zA-Z0-9\s\-\.\(\)\/]/g, '');
-    return JSON.stringify({
-        deviceType: 'h5',
-        ua: safeUA,
-        bioMetaInfo: '4.1.0:2916352,0'
-    });
-}
-
 // ------- 表单提交：调用后端初始化认证 -------
 document.getElementById('simpleAuthForm').addEventListener('submit', async function(e){
     e.preventDefault();

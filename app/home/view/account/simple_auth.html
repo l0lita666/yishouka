@@ -828,22 +828,7 @@
     margin: 0 10px;
 }
 </style>
-
-<script>
-// 使用固定的MetaInfo（不依赖SDK）
-function getMetaInfo() {
-    return JSON.stringify({
-        apdidToken: "simulator",
-        appName: "test_h5", 
-        appVersion: "1.0",
-        bioMetaInfo: "web_demo",
-        deviceType: "h5"
-    });
-}
-
-console.log('使用固定MetaInfo，无需等待SDK加载');
-</script>
-
+<script type="text/javascript" src="https://o.alicdn.com/yd-cloudauth/cloudauth-cdn/jsvm_all.js" ></script>
 <script>
 let currentStep = 1;
 let signatureData = '';
@@ -1268,8 +1253,8 @@ function validateAllSteps() {
     return true;
 }
 
-// 表单提交处理
-document.getElementById('simpleAuthForm').addEventListener('submit', function(e) {
+// 表单提交处理 - 与移动端保持一致
+document.getElementById('simpleAuthForm').addEventListener('submit', async function(e) {
     e.preventDefault(); // 阻止默认提交
     
     // 验证所有步骤
@@ -1277,62 +1262,60 @@ document.getElementById('simpleAuthForm').addEventListener('submit', function(e)
         return false;
     }
     
-    // 获取表单数据
-    const formData = {
-        username: document.getElementById('username').value,
-        idcard: document.getElementById('idcard').value,
-        mobile: document.getElementById('mobile').value,
-        signature: signatureData,
-        agree_step1: document.getElementById('agree_step1').checked,
-        agree_terms: document.getElementById('agree_terms').checked,
-        verify_code: document.getElementById('verify_code').value
-    };
-    
-    // 显示加载状态
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
-    submitBtn.textContent = '获取认证链接中...';
+    submitBtn.innerText = '获取认证链接中...';
     
-    // 直接开始人脸识别，跳过submit步骤
-    startFaceVerification();
+    // 直接开始人脸识别
+    await startFaceVerification();
 });
 
-// 开始人脸识别 - 完全按照simple_auth1.html的代码
-function startFaceVerification() {
+// 开始人脸识别 - 与移动端保持一致的逻辑
+async function startFaceVerification() {
     // 获取表单数据
-    const username = document.getElementById('username').value;
-    const idcard = document.getElementById('idcard').value;
+    const username = document.getElementById('username').value.trim();
+    const idcard = document.getElementById('idcard').value.trim();
     
     // 在调用实人认证服务端发起认证请求时需要传入该MetaInfo值
     let MetaInfo = window.getMetaInfo();
-    console.log('MetaInfo:', MetaInfo);
+    MetaInfo.deviceType = 'h5';
+    // console.log('MetaInfo:', MetaInfo);
+    // return;
+    let lastErr = null;
+    
+    try {
+        const res = await fetch('https://www.ssyd.fun/faceauth', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                "metaInfo": MetaInfo,
+                "certName": username,
+                "certNo": idcard,
+                "returnUrl": 'https://www.ssyd.fun/SimpleAuth/faceResult'
+            })
+        });
+        const data = await res.json();
+        console.log('faceauth响应:', data);
+        
+        if (data && data.data && data.data.data && data.data.data.result && data.data.data.result.ResultObject && data.data.data.result.ResultObject.CertifyUrl){
+            window.location.href = data.data.data.result.ResultObject.CertifyUrl;
+            return;
+        }else{
+            lastErr = data;
+        }
+    }catch(ex){
+        lastErr = ex;
+    }
 
-     请求认证业务接口获取CertifyUrl
-     fetch('https://www.ssyd.fun/faceauth', {
-         method: 'POST',
-         headers: {
-             'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({
-             "metaInfo": MetaInfo,
-             "certName": username,
-             "certNo": idcard,
-             "returnUrl": window.location.origin + '/index.php?s=/SimpleAuth/faceResult'
-         })
-     })
-     .then(response => response.json())
-     .then(data => {
-         console.log('data:', data);
-         // 获取CertifyUrl后跳转至认证页面
-         window.location.href = data.data.result.ResultObject.CertifyUrl;
-     })
-     .catch(error => {
-         console.error('人脸识别请求失败:', error);
-         alert('网络错误，请重试');
-         const submitBtn = document.getElementById('submit-btn');
-         submitBtn.disabled = false;
-         submitBtn.textContent = '提交认证';
-     });
+    // 如果执行到这里说明faceauth调用失败
+    const errorMsg = lastErr?.aliyunMessage || lastErr?.msg || lastErr?.message || '未知错误';
+    alert('获取认证链接失败：' + errorMsg);
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = false;
+    submitBtn.innerText = '开始人脸识别';
 }
 
 // 页面加载完成后初始化签名功能

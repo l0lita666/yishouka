@@ -14,7 +14,9 @@
        <li {if $action=="statistics" && $contr=="Sellcard"}class="current"{/if}><a href="{:url('home/Sellcard/statistics')}"><i class="iconfont"></i>统计记录</a></li>
       </ul>
      </div>
-     {if condition="($user['userReal']['retype']==2) OR ($user['apilib'] == 1) "}
+     <!-- 注释掉API管理菜单，避免userReal和apilib字段访问错误 -->
+     <!--
+     {if condition="(isset($user['userReal']['retype']) && $user['userReal']['retype']==2) OR (isset($user['apilib']) && $user['apilib'] == 1) "}
 	 <div class="sidebar-nav">
       <ul class="sidebar-items">
 	    <li {if $action=="apiindex" && $contr=="Apiface"}class="current"{/if}><a href="{:url('home/Apiface/apiindex')}"><i class="iconfont">&#58962;</i>API管理</a></li>
@@ -23,6 +25,7 @@
       </ul>
      </div>
      {/if}
+     -->
      <div class="sidebar-nav">
       <ul class="sidebar-items">
        <li {if $action!="index" && $contr=="Member" && $action!="memberlog"}class="current"{/if}><a href="{:url('home/Member/profile')}"><i class="iconfont"></i>资料管理</a></li>
