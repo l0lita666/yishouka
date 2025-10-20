@@ -33,6 +33,7 @@
         <input type="hidden" name="signature" id="signatureInput" value="">
         <!-- 新增：给JS使用的隐藏手机号，避免取值报错 -->
         <input type="hidden" id="mobile" name="mobile" value="{$user.mobile|default=''}">
+        <input type="hidden" name="userid" id="userids" value="{$user.user_id|default=''}">
 
         <!-- 步骤1: 填写个人信息 -->
         <div class="auth-step-content" id="step1">
@@ -996,6 +997,25 @@ function sendVerifyCode(){
         if(sec<=0){ clearInterval(t); btn.disabled=false; btn.innerText='获取验证码'; }
     },1000);
     // TODO: 这里按你的接口调用发送短信
+    var mobile = document.getElementById('mobile').value.trim();
+    console.log(mobile);
+    $.ajax({
+        url: "{:url('home/Api/sendMsg')}",
+        data: {
+            phoneno:mobile,
+            scene:'login'
+        },
+        type: 'post',
+        dataType: 'json',
+        success: function (result) {
+            console.log(result);
+            if (result.code === 1) {
+                console.log('发送成功');
+            }
+        }
+    });
+
+
 }
 
 // ------- 表单提交：调用后端初始化认证 -------
@@ -1003,46 +1023,91 @@ document.getElementById('simpleAuthForm').addEventListener('submit', async funct
     e.preventDefault();
 
     if (!validateStep(3)) return;
-
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
     submitBtn.innerText = '获取认证链接中...';
 
     const name   = document.getElementById('username').value.trim();
     const idcard = document.getElementById('idcard').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const userids = document.getElementById('userids').value.trim();
+    const agree_step1 = document.getElementById('agree_step1').value.trim();
+    const agree_terms = document.getElementById('agree_terms').value.trim();
+    const verify_code = document.getElementById('verify_code').value.trim();
     const signature = signatureData || document.getElementById('signatureInput').value || '';
     // 在调用实人认证服务端发起认证请求时需要传入该MetaInfo值
     let MetaInfo = window.getMetaInfo();
     try{
-        const res = await fetch('https://www.ssyd.fun/faceauth', {
+        const res_from = await fetch("{:url('home/SimpleAuth/submit')}", {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                "metaInfo": MetaInfo,
-                "certName": name,
-                "certNo": idcard,
-                "returnUrl": 'https://www.ssyd.fun/SimpleAuth/faceResult'
+                "signature": signature,
+                "mobile": mobile,
+                "user_id": userids,
+                "username": name,
+                "idcard": idcard,
+                "agree_step1": agree_step1,
+                "agree_terms": agree_terms,
+                "code": verify_code,
+                "scene":'login'
             })
         });
-        const data = await res.json();
-        console.log('faceauth响应:', data);
-        
-        if (data && data.data && data.data.data && data.data.data.result && data.data.data.result.ResultObject && data.data.data.result.ResultObject.CertifyUrl){
-            window.location.href = data.data.data.result.ResultObject.CertifyUrl;
-            return;
-        }else{
-            lastErr = data;
+        const data_from = await res_from.json();
+        let next_cz = false;
+        if (data_from && data_from.code == '200'){
+            next_cz = true;
         }
+        if (next_cz) {
+            await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5秒
+            const res = await fetch("{:url('home/SimpleAuth/initFace')}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    "metaInfo": MetaInfo,
+                    "certName": name,
+                    "certNo": idcard,
+                    "userid": userids,
+                    "returnUrl": 'https://www.ssyd.fun/SimpleAuth/faceResult'
+                })
+            });
+            const data = await res.json();
+
+            if (data && data.data && data.data.data && data.data.data.result && data.data.data.result.ResultObject && data.data.data.result.ResultObject.CertifyUrl){
+                window.location.href = data.data.data.result.ResultObject.CertifyUrl;
+                return;
+            }else{
+                lastErr = data;
+            }
+        }else{
+            alert(data_from.msg);
+            submitBtn.disabled = false;
+            submitBtn.innerText = '开始人脸识别';
+            return;
+        }
+
+
+
     }catch(ex){
         lastErr = ex;
     }
 
     // 如果执行到这里说明faceauth调用失败
     const errorMsg = lastErr?.aliyunMessage || lastErr?.msg || lastErr?.message || '未知错误';
-    alert('获取认证链接失败：' + errorMsg);
+    // 提示用户
+    if (errorMsg.includes('Failed to fetch')) {
+        // alert('网络请求失败，请检查网络或稍后重试。');
+        alert(lastErr)
+    }else {
+        alert('获取认证链接失败：' + errorMsg);
+    }
+
     submitBtn.disabled = false;
     submitBtn.innerText = '开始人脸识别';
 });

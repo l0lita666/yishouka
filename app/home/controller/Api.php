@@ -2,12 +2,14 @@
 declare (strict_types = 1);
 namespace app\home\controller;
 
+use think\facade\Db;
 use think\Request;
 use think\facade\Validate;
 use app\common\model\User;
 use app\common\controller\Base;
 use app\common\model\Newapi;
 use app\commom\model\CardOperator;
+use think\facade\Log;
 
 class Api extends Base
 {
@@ -30,20 +32,24 @@ class Api extends Base
 			}
 			try{
 				$this->validate($data, $can);
-            }catch (\Exception $e){
-				if(isJsonBool($e->getMessage(),true)!==false){
-				   return json(isJsonBool($e->getMessage()));exit;
-				}else{
-					$str=$e->getMessage();
-					$arr=getArr($str);
-					if(count($arr)>1){
-						return json(['tip'=>$arr[0], 'content'=>$arr[1]]);
-					}else{
-					  return json(["eval"=>"","tip"=>"#mcode","type"=>2,"content"=>$e->getMessage()]);
-					}
-				}
+            }catch (\Exception $e) {
+                if (isJsonBool($e->getMessage(), true) !== false) {
+                    return json(isJsonBool($e->getMessage()));
+                    exit;
+                } else {
+                    $str = $e->getMessage();
+                    $arr = getArr($str);
+                    if (count($arr) > 1) {
+                        return json(['tip' => $arr[0], 'content' => $arr[1]]);
+                    } else {
+                        return json(["eval" => "", "tip" => "#mcode", "type" => 2, "content" => $e->getMessage()]);
+                    }
+                }
             }
 				$code=mt_rand(100000,999999);
+
+                Log::info($data['phoneno'].'的验证码是:'.$code);
+
 				$da=['code'=>$code,'time'=>time()+300];
 				session($data['scene'].$data['phoneno'],$da);
 				cookie($data['scene']."time",time()+60);
@@ -57,10 +63,19 @@ class Api extends Base
 					break; 
 				}
 				$res=sendMsg($data['phoneno'],$msgtype,$code);
+                $code_log=[
+                    'mobile'=>$data['phoneno'],
+                    'code'=>$code,
+                    'create_time'=>time(),
+                    'exp_time'=>time()+300,
+                    'remarks'=>$res['msg']
+
+                ];
+                Db::name('sms_log')->insert($code_log);
 			if($res['code']==1){
 				return json(["eval"=>"codetime(60)","tip"=>"#mcode","type"=>1,"content"=>"发送成功，请等待！"]);
 			}else{
-				return json(["eval"=>"","tip"=>"#mcode","type"=>2,"content"=>$res['msg'].$code]);
+				return json(["eval"=>"","tip"=>"#mcode","type"=>2,"content"=>$res['msg']]);
 			}
 		}
 	}
@@ -85,11 +100,12 @@ class Api extends Base
 					return json(["eval"=>"","tip"=>"#emcode","type"=>2,"content"=>$e->getMessage()]);
 				}
             }
-				$code=generate_password(4);
-				$da=['code'=>$code,'time'=>time()+300];
-				session($data['scene'].$data['emailno'],$da);
-				cookie($data['scene']."time",time()+60);
-				$res=sendEmail($data['emailno'],$code);
+            $code=generate_password(4);
+            $da=['code'=>$code,'time'=>time()+300];
+            session($data['scene'].$data['emailno'],$da);
+            cookie($data['scene']."time",time()+60);
+            $res=sendEmail($data['emailno'],$code);
+            print_r($res);exit();
 			if($res['code']==1){
 				return json(["eval"=>"codetime(60,1)","tip"=>"#emcode","type"=>1,"content"=>"发送成功，请等待！"]);
 			}else{

@@ -66,7 +66,7 @@ class Cash extends UserBase
 		if ($this->request->isAjax()){
 			$data=input();
 			try{
-				$this->validate($data, 'cash');
+//				$this->validate($data, 'cash');
             }catch (\Exception $e){
 				$str=$e->getMessage();
 				$res=getArr($str);
@@ -84,10 +84,12 @@ class Cash extends UserBase
 			$map['status']=0;
 			$okk=withdraw::where([['shopid','=',$map['shopid']],['status','in','0,1']])->find();
 			if($okk){
-			    return ['code'=>'#moneyoff','msg'=>'你还有一笔提现正在处理'];
+//			    return ['code'=>'#moneyoff','msg'=>'你还有一笔提现正在处理'];
+                return json(['confirm'=>['name'=> "提现申请失败！", 'width'=>400, 'prompt'=> "warning",'time'=>2,'url'=>'/act_cash.html'],'content'=>'你还有一笔提现正在处理...']);
 			}else{
 			    $yuer=User::where(['id'=>session('user_auth.user_id')])->value('money');
-			    if($yuer<(int)$data['moneyoff'])return ['code'=>'#moneyoff','msg'=>'余额不足'];
+//			    if($yuer<(int)$data['moneyoff'])return ['code'=>'#moneyoff','msg'=>'余额不足'];
+			    if($yuer<(int)$data['moneyoff'])return json(['confirm'=>['name'=> "提现申请失败！", 'width'=>400, 'prompt'=> "warning",'time'=>2,'url'=>'/act_cash.html'],'content'=>'账户余额不足']);
     			$ok=(new Withdraw)->save($map);
     			User::where(['id'=>session('user_auth.user_id')])->dec('money',(int)$data['moneyoff'])->update();
     			if($ok){
@@ -102,6 +104,26 @@ class Cash extends UserBase
         				}else{
         					(new Withdraw)->where(['order'=>$orderid])->update(['status'=>1]);
         				}
+
+                        // 飞书提醒管理员有新的销卡待审记录
+                        $webhook = 'https://open.feishu.cn/open-apis/bot/v2/hook/eb778920-23e4-4c16-b4a1-56f6edbe49cc';
+                        $fs_con = "【订单提醒】\n刚刚有1个新的提现订单提交，请前往处理\n时间：" . date('Y-m-d H:i:s');
+                        $message = [
+                            'msg_type' => 'text',
+                            'content' => [
+                                'text' => $fs_con
+                            ]
+                        ];
+                        $result = sendFeiShuRobot($webhook, $message);
+                        $code_log=[
+                            'type'=>2,
+                            'content'=>$fs_con,
+                            'create_time'=>time(),
+                            'edit_time'=>time()+300,
+                            'status'=>$result['code'] == 0 ? 1 : 2
+                        ];
+                        Db::name('fs_msg_log')->insert($code_log);
+
         				return json(['confirm'=>['name'=> "提现申请成功！", 'width'=>400, 'prompt'=> "success",'time'=>1,'url'=>'/act_cashrecords.html'],'content'=>'操作成功....']);
         			}else{
         				return json(["tip"=>"#anjian","content"=>"",'token'=>token()]);

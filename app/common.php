@@ -4,6 +4,7 @@ use think\facade\Db;
 use app\common\model\CardChannel;
 use app\common\model\UserRate;
 use app\common\model\User;
+use app\api\controller\SendSms;
 // 应用公共文件
 /**
 *前台显示费率**/
@@ -638,20 +639,67 @@ function vpost($url, $data = array(),$ssl=false,$arr=[]) {// 模拟提交数据�
 }
 
 function sendMsg($photo,$cont,$code){
-	$con=new think\facade\Config;
-	$pei=$con::load('setting/qcloudsms','qcloudsms');
-	switch($pei['atype']){
-		case 1:
-		  return sendmobile($photo,$cont,$code,$pei);
-		break;
-		case 2:
-		  return yunpian($photo,$cont,$code,$pei);
-		break;
-		default:
-		 return duanxin($photo,$cont,$code,$pei);
-	}
+
+    $newsms = new SendSms();
+    $scontent = array('code'=>$code);
+    $res = $newsms->sendCode($photo,$scontent,'SMS_327285668');
+    return $res;
+
+//	$con=new think\facade\Config;
+//	$pei=$con::load('setting/qcloudsms','qcloudsms');
+//
+//    print_r($pei);exit();
+//	switch($pei['atype']){
+//		case 1:
+//		  return sendmobile($photo,$cont,$code,$pei);
+//		break;
+//		case 2:
+//		  return yunpian($photo,$cont,$code,$pei);
+//		break;
+//		default:
+//		 return duanxin($photo,$cont,$code,$pei);
+//	}
 		
 }
+
+function sendMsg_other($photo,$con_arr,$template){
+
+    $newsms = new SendSms();
+    $scontent = $con_arr;
+    if ($template == 1){
+        //订单审核成功
+        $templatecode = '';
+    }else if ($template == 2){
+        //订单审核失败
+        $templatecode = '';
+    }else if ($template == 3){
+        //提现审核成功
+        $templatecode = '';
+    }else {
+        //提现审核失败
+        $templatecode = '';
+    }
+    $res = $newsms->sendCode($photo,$scontent,$templatecode);
+    return $res;
+}
+
+function sendFeiShuRobot($webhookUrl, $data) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $webhookUrl);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json'
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return json_decode($response, true);
+}
+
+
 function duanxin($photo,$cont,$code,$pei){
 	try{
 		$statusStr = array(

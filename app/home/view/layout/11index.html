@@ -99,9 +99,9 @@
        联系客服
       </dt>
       <dd>
-       <p class="call"><strong class="text-red">{$C.kefu}</strong><small>（免费客服电话）</small></p>
+       <!--<p class="call"><strong class="text-red">{$C.kefu}</strong><small>（免费客服电话）</small></p>-->
        <div class="online">
-        <a class="btn btn-primary" href="javascript:;" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');" rel="external nofollow"> <i class="iconfont"></i>在线客服咨询</a>
+        <a class="btn btn-primary" href="tencent://message/?uin={$C.qq}&Site=QQ交谈&Menu=yes" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');" rel="external nofollow"> <i class="iconfont"></i>QQ在线咨询</a>
        </div>
        <p class="time">客服时间：周一至周日 08:00-次日01:00</p>
       </dd>
@@ -155,21 +155,21 @@
   </div>
   <dl class="toolbar" id="toolbar">
    <dt data-hover="dropdown">
-    <a href="javascript:;" id="zhiCustomBtn" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');"><i class="iconfont iconfont-service "></i><span class="iconfont-text">在线咨询</span></a>
-    <div class="dropdown-menu dropdown-menu-call animated fadeInRight">
-     <h5>您也可以拨打客服电话：</h5>
-     <p class="text-red h2">{$C.kefu}</p>
-     <p class="text-light h6">（08:00-次日01:00）</p>
-    </div>
+    <a href="tencent://message/?uin={$C.qq}&Site=QQ交谈&Menu=yes" id="zhiCustomBtn" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');"><i class="iconfont iconfont-service "></i><span class="iconfont-text">在线咨询</span></a>
+    <!--<div class="dropdown-menu dropdown-menu-call animated fadeInRight">-->
+    <!-- <h5>您也可以拨打客服电话：</h5>-->
+    <!-- <p class="text-red h2">{$C.kefu}</p>-->
+    <!-- <p class="text-light h6">（08:00-次日01:00）</p>-->
+    <!--</div>-->
    </dt>
-   <dd data-hover="dropdown" class="hidden">
-    <a href="javascript:;"><i class="iconfont iconfont-call"></i><span class="iconfont-text">客服<br />电话</span></a>
-    <div class="dropdown-menu dropdown-menu-call animated fadeInRight">
-     <h5>平台客服咨询电话：</h5>
-     <p class="text-red h2">{template tel}</p>
-     <p class="text-light h6">（08:00-次日01:00）</p>
-    </div>
-   </dd>
+   <!--<dd data-hover="dropdown" class="hidden">-->
+   <!-- <a href="javascript:;"><i class="iconfont iconfont-call"></i><span class="iconfont-text">客服<br />电话</span></a>-->
+   <!-- <div class="dropdown-menu dropdown-menu-call animated fadeInRight">-->
+   <!--  <h5>平台客服咨询电话：</h5>-->
+   <!--  <p class="text-red h2">{template tel}</p>-->
+   <!--  <p class="text-light h6">（08:00-次日01:00）</p>-->
+   <!-- </div>-->
+   <!--</dd>-->
    {notempty name="C.wxewm"}
    <dd data-hover="dropdown">
     <a href="javascript:;"><i class="iconfont iconfont-weixin"></i><span class="iconfont-text">关注<br />微信</span></a>

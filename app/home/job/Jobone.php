@@ -1,5 +1,4 @@
 <?php
-namespace app\home\job;
 
 use think\queue\Job;
 use app\common\model\UserLog;
@@ -46,7 +45,6 @@ class Jobone{
            }
 		   $api=new Newapi(isset($data['type'])?$data['type']:0);
 		   $ok=$api->sendData($data);
-	
 				$job->delete();
 		   
 		  if ($job->attempts() > 3) {

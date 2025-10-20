@@ -119,13 +119,16 @@ class Sellcard extends UserBase
     public function reissued(){
         if($this->request->isPost()){
             $order=input('batchno');
-            $list=Order::where([['batchno','=',$order],['uid','=',session('user_auth.user_id')],['state','=',3],['reissed','<',3],['remarks','like','%可再次%']])->select();
+//            $list=Order::where([['batchno','=',$order],['shopid','=',session('user_auth.user_id')],['state','=',3],['reissed','<',3],['remarks','like','%可再次%']])->select();
+            $list=Order::where([['batchno','=',$order],['shopid','=',session('user_auth.user_id')],['state','=',3],['reissed','<',3],['remarks','like','%失败%']])->select();// 不是走的验证只能输出失败
             $resnum=0;
             $arr=[];
             foreach($list as $k=>$v){
                 $arr[$k]['id']=$v['id'];
                 $arr[$k]['reissed']=$v['reissed']+1;
                 \think\facade\Queue::push("app\home\job\Jobone@sendCardUrgent", $v,'sendCardUrgentJobQueue');
+                //没有对接接口。暂时手动调整为处理中状态
+                $arr[$k]['state']=1;
                 $resnum++;
             }
             (new Order)->saveAll($arr);

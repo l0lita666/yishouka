@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>实名认证</title>
+        <!--   引入该JS，全局注入getMetaInfo方法   -->
+    <script type="text/javascript" src="https://o.alicdn.com/yd-cloudauth/cloudauth-cdn/jsvm_all.js" ></script>
+  </head>
+  <body>
+  <div></div>
+  <input type="hidden" id="certifyId" value="{$certifyId}">
+    <script>
+    const certifyId = document.getElementById('certifyId').value.trim();
+    // 请求认证业务接口获取CertifyUrl
+    fetch("{:url('home/SimpleAuth/describeFace')}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"certifyId":certifyId})
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('data:', data)
+        // 获取认证结果
+        if (data && data.data && data.data.data && data.data.data.result && data.data.data.result.ResultObject && data.data.data.result.ResultObject.passed == 'T'){
+          // 认证通过
+          alert('认证通过');
+          // window.location.href = 'https://www.ssyd.fun/user_pro458.html';
+          window.location.href = "{:url('home/Member/profile')}";
+          return;
+        }else{
+          // 认证不通过
+          if (data.code == '500'){
+            alert(data.msg+',请重新认证');
+          }else {
+            const message = data.data.data.result.ResultObject.message;
+            alert('认证不通过：'+message+',请重新认证');
+          }
+
+          // window.location.href = 'https://www.ssyd.fun/SimpleAuth';
+          window.location.href = "{:url('home/SimpleAuth/index')}";
+          return;
+        }
+      });
+    </script>
+  </body>
+</html>
+            

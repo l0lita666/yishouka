@@ -96,6 +96,11 @@ class Order extends AdminBase
 			$order=Orders::find($da['id']);
 			$state=$order->getData('state');
 			if($order['qiang']==session('admin_auth.admin_id')){
+                //暂时跳过验证，直接将卡等待验证状态改为处理中
+                if ($state == 0){
+                    (new Orders)->where(['id'=>$da])->update(['state'=>1]);
+                    $state = 1;
+                }
 				switch($da['type']){
 					case 'error':
 					 if($state!=3 && $state!=0){

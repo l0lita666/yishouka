@@ -120,28 +120,30 @@
 		</div>
 		
 		<dl class="toolbar" id="toolbar">
-			<dt data-hover="dropdown"><a href="javascript:;" id="zhiCustomBtn" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');"><i class="iconfont iconfont-service ">&#xe63f;</i><span class="iconfont-text">在线咨询</span></a>
-			<div class="dropdown-menu dropdown-menu-call animated fadeInRight">
-				<h5>您也可以拨打客服电话：</h5>
-				<p class="text-red h2">
-					4000518288
-				</p>
-				<p class="text-light h6">
-					（08:00-23:00）
-				</p>
-			</div>
+			<dt data-hover="dropdown">
+			    <a class="btn btn-primary btn-block zhiCustomBtn" href="tencent://message/?uin={$C.qq}&Site=QQ交谈&Menu=yes" onclick="chatinit('905bce5dd3944726a64816bd7a9b34d9');" rel="external nofollow">
+			        <i class="iconfont iconfont-service ">&#xe63f;</i><span class="iconfont-text">在线咨询</span></a>
+			<!--<div class="dropdown-menu dropdown-menu-call animated fadeInRight">-->
+			<!--	<h5>您也可以拨打客服电话：</h5>-->
+			<!--	<p class="text-red h2">-->
+			<!--		4000518288-->
+			<!--	</p>-->
+			<!--	<p class="text-light h6">-->
+			<!--		（08:00-23:00）-->
+			<!--	</p>-->
+			<!--</div>-->
 			</dt>
-			<dd data-hover="dropdown" class="hidden"><a href="javascript:;"><i class="iconfont iconfont-call">&#xe636;</i><span class="iconfont-text">客服<br>
-			电话</span></a>
-			<div class="dropdown-menu dropdown-menu-call animated fadeInRight">
-				<h5>平台客服咨询电话：</h5>
-				<p class="text-red h2">
-				</p>
-				<p class="text-light h6">
-					（08:00-23:00）
-				</p>
-			</div>
-			</dd>
+			<!--<dd data-hover="dropdown" class="hidden"><a href="javascript:;"><i class="iconfont iconfont-call">&#xe636;</i><span class="iconfont-text">客服<br>-->
+			<!--电话</span></a>-->
+			<!--<div class="dropdown-menu dropdown-menu-call animated fadeInRight">-->
+			<!--	<h5>平台客服咨询电话：</h5>-->
+			<!--	<p class="text-red h2">-->
+			<!--	</p>-->
+			<!--	<p class="text-light h6">-->
+			<!--		（08:00-23:00）-->
+			<!--	</p>-->
+			<!--</div>-->
+			<!--</dd>-->
 			{notempty name="wx.wxewm"}
 			<dd data-hover="dropdown"><a href="javascript:;"><i class="iconfont iconfont-weixin">&#xe7e5;</i><span class="iconfont-text">关注<br>
 			微信</span></a>

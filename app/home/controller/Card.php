@@ -3,13 +3,12 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 use app\common\controller\IndexBase;
-use app\common\model\CardModel;
-use app\common\model\CardList;
 use app\common\model\CardChannel;
+use app\common\model\CardList;
+use app\common\model\CardModel;
 use app\common\model\Order;
+use think\facade\Db;
 use think\facade\View;
-use think\Request;
-use app\common\model\Uploads as UploadsModel;
 
 class Card extends IndexBase
 {
@@ -121,6 +120,26 @@ class Card extends IndexBase
 						 }else{
 						    \think\facade\Queue::push("app\home\job\Jobone@sendCard", $map,'sendCardJobQueue');
 						 }
+
+                         // 飞书提醒管理员有新的销卡待审记录
+                         $webhook = 'https://open.feishu.cn/open-apis/bot/v2/hook/eb778920-23e4-4c16-b4a1-56f6edbe49cc';
+                         $fs_con = "【订单提醒】\n刚刚有1个新的销卡订单提交，请前往处理\n时间：" . date('Y-m-d H:i:s');
+                         $message = [
+                             'msg_type' => 'text',
+                             'content' => [
+                                 'text' => $fs_con
+                             ]
+                         ];
+                         $result = sendFeiShuRobot($webhook, $message);
+                         $code_log=[
+                             'type'=>1,
+                             'content'=>$fs_con,
+                             'create_time'=>time(),
+                             'edit_time'=>time()+300,
+                             'status'=>$result['code'] == 0 ? 1 : 2
+                         ];
+                         Db::name('fs_msg_log')->insert($code_log);
+
 						 return json(["state"=>1,"type"=>"0","content"=>"共有 1 张卡成功提交,请在卖卡明细中查看进度！","list"=>[],"confirm"=>["name"=>"提交成功","prompt"=>"success","width"=>400,"time"=>5,"url"=>"reload"]]);
 					 }else{
 						 return json(['confirm'=>['width'=>'350', 'prompt'=> "warning"],'content'=>$ok,'list'=> [],'type'=> "2"]);
@@ -170,6 +189,26 @@ class Card extends IndexBase
     							   \think\facade\Queue::push("app\home\job\Jobone@sendCard", $v,'sendCardJobQueue');
     							 }
     						 }
+
+                             // 飞书提醒管理员有新的销卡待审记录
+                             $webhook = 'https://open.feishu.cn/open-apis/bot/v2/hook/eb778920-23e4-4c16-b4a1-56f6edbe49cc';
+                             $fs_con = "【订单提醒】\n刚刚有1个新的销卡订单提交，请前往处理\n时间：" . date('Y-m-d H:i:s');
+                             $message = [
+                                 'msg_type' => 'text',
+                                 'content' => [
+                                     'text' => $fs_con
+                                 ]
+                             ];
+                             $result = sendFeiShuRobot($webhook, $message);
+                             $code_log=[
+                                 'type'=>1,
+                                 'content'=>$fs_con,
+                                 'create_time'=>time(),
+                                 'edit_time'=>time()+300,
+                                 'status'=>$result['code'] == 0 ? 1 : 2
+                             ];
+                             Db::name('fs_msg_log')->insert($code_log);
+
     						 $msg=["state"=>1,"type"=>2,'num'=>$count,"content"=>"共有{$count} 张卡成功提交,请在卖卡明细中查看进度！","list"=>$err,"confirm"=>["name"=>"提交成功","prompt"=>"success","width"=>400,"time"=>5,"url"=>"reload"]];
 					     }
 					 }
@@ -199,6 +238,28 @@ class Card extends IndexBase
 						 $n++;
 					}
 					(new Order)->saveAll($map);
+
+                    // 飞书提醒管理员有新的销卡待审记录
+                    if ($n > 0){
+                        $webhook = 'https://open.feishu.cn/open-apis/bot/v2/hook/eb778920-23e4-4c16-b4a1-56f6edbe49cc';
+                        $fs_con = "【订单提醒】\n刚刚有1个新的销卡订单提交，请前往处理\n时间：" . date('Y-m-d H:i:s');
+                        $message = [
+                            'msg_type' => 'text',
+                            'content' => [
+                                'text' => $fs_con
+                            ]
+                        ];
+                        $result = sendFeiShuRobot($webhook, $message);
+                        $code_log=[
+                            'type'=>1,
+                            'content'=>$fs_con,
+                            'create_time'=>time(),
+                            'edit_time'=>time()+300,
+                            'status'=>$result['code'] == 0 ? 1 : 2
+                        ];
+                        Db::name('fs_msg_log')->insert($code_log);
+                    }
+
 					$msg=["state"=>1,"type"=>"0",'num'=>$n,"content"=>"共有{$n} 张卡成功提交,请在卖卡明细中查看进度！","list"=>[],"confirm"=>["name"=>"提交成功","prompt"=>"success","width"=>400,"time"=>5,"url"=>"reload"]];
 					return json($msg);
 				break;

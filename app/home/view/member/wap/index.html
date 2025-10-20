@@ -102,22 +102,23 @@
 	<div class="card">
 		<div class="cell account-deal">
 			<a class="cell-bd" href="{:url('home/Sellcard/statistics')}"><i class="iconfont iconfont-statistics bg-red"></i><span>我的统计</span></a>
-			<a class="cell-bd" href="{:url('home/Sellcard/order')}"><i class="iconfont iconfont-trade bg-info"></i><span>卖卡记录</span></a><a class="cell-bd" href="{:url('home/Apiface/consign')}"><i class="iconfont iconfont-order bg-pink"></i><span>API收单</span></a>
-			<a class="cell-bd" href="{:url('home/Apiface/statistics')}"><i class="iconfont iconfont-history bg-orange"></i><span>API统计</span></a>
+			<a class="cell-bd" href="{:url('home/Sellcard/order')}"><i class="iconfont iconfont-trade bg-info"></i><span>卖卡记录</span></a>
+			<!--<a class="cell-bd" href="{:url('home/Apiface/consign')}"><i class="iconfont iconfont-order bg-pink"></i><span>API收单</span></a>-->
+			<!--<a class="cell-bd" href="{:url('home/Apiface/statistics')}"><i class="iconfont iconfont-history bg-orange"></i><span>API统计</span></a>-->
 		</div>
 	</div>
 	<div class="card">
-	    <a class="cell cell-access" href="{:url('home/Member/assets')}">
-		<div class="cell-hd">
-			<i class="iconfont iconfont-trip text-orange"></i>
-		</div>
-		<div class="cell-bd">
-			邀请管理
-		</div>
-		<div class="cell-ft">
-			<span class="h6">邀请有礼</span>
-		</div>
-		</a>
+	 <!--   <a class="cell cell-access" href="{:url('home/Member/assets')}">-->
+		<!--<div class="cell-hd">-->
+		<!--	<i class="iconfont iconfont-trip text-orange"></i>-->
+		<!--</div>-->
+		<!--<div class="cell-bd">-->
+		<!--	邀请管理-->
+		<!--</div>-->
+		<!--<div class="cell-ft">-->
+		<!--	<span class="h6">邀请有礼</span>-->
+		<!--</div>-->
+		<!--</a>-->
 		
 		<a class="cell cell-access" href="{:url('home/Member/profile')}">
 		<div class="cell-hd">
@@ -131,44 +132,45 @@
 		</div>
 		</a>
 		{if $xt=="IOS" && $wx.isourl!=""}
-		<a class="cell cell-access" href="{$wx.isourl|default=""}">
-		<div class="cell-hd">
-			<i class="iconfont iconfont-hot text-choc"></i>
-		</div>
-		<div class="cell-bd">
-			APP下载
-		</div>
-		<div class="cell-ft">
-			<span class="h6">更简单、更快捷、更安全</span>
-		</div>
-		</a>
+		<!--<a class="cell cell-access" href="{$wx.isourl|default=""}">-->
+		<!--<div class="cell-hd">-->
+		<!--	<i class="iconfont iconfont-hot text-choc"></i>-->
+		<!--</div>-->
+		<!--<div class="cell-bd">-->
+		<!--	APP下载-->
+		<!--</div>-->
+		<!--<div class="cell-ft">-->
+		<!--	<span class="h6">更简单、更快捷、更安全</span>-->
+		<!--</div>-->
+		<!--</a>-->
 		{/if}
 		{if $xt=="Android" && $wx.apkurl!=""}
-		<a class="cell cell-access" href="{$wx.apkurl|default=""}">
-		<div class="cell-hd">
-			<i class="iconfont iconfont-hot text-choc"></i>
-		</div>
-		<div class="cell-bd">
-			APP下载
-		</div>
-		<div class="cell-ft">
-			<span class="h6">更简单、更快捷、更安全</span>
-		</div>
-		</a>
+		<!--<a class="cell cell-access" href="{$wx.apkurl|default=""}">-->
+		<!--<div class="cell-hd">-->
+		<!--	<i class="iconfont iconfont-hot text-choc"></i>-->
+		<!--</div>-->
+		<!--<div class="cell-bd">-->
+		<!--	APP下载-->
+		<!--</div>-->
+		<!--<div class="cell-ft">-->
+		<!--	<span class="h6">更简单、更快捷、更安全</span>-->
+		<!--</div>-->
+		<!--</a>-->
 		{/if}
 	</div>
 	<div class="card">
-		<a class="cell cell-access" href="{:url('home/index/company')}">
-		<div class="cell-hd">
-			<i class="iconfont iconfont-company text-orange"></i>
-		</div>
-		<div class="cell-bd">
-			企业合作
-		</div>
-		<div class="cell-ft">
-			<span class="h6">针对金融、保险等企业</span>
-		</div>
-		</a><a class="cell cell-access" href="{:url('home/index/cooperation')}">
+		<!--<a class="cell cell-access" href="{:url('home/index/company')}">-->
+		<!--<div class="cell-hd">-->
+		<!--	<i class="iconfont iconfont-company text-orange"></i>-->
+		<!--</div>-->
+		<!--<div class="cell-bd">-->
+		<!--	企业合作-->
+		<!--</div>-->
+		<!--<div class="cell-ft">-->
+		<!--	<span class="h6">针对金融、保险等企业</span>-->
+		<!--</div>-->
+		<!--</a>-->
+		<a class="cell cell-access" href="{:url('home/index/cooperation')}">
 		<div class="cell-hd">
 			<i class="iconfont iconfont-cooperation text-orange"></i>
 		</div>

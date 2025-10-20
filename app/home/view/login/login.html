@@ -1,6 +1,6 @@
 {extend name="layout/index" /} 
 {block name="titile"}
-  <title>{$C['sitename']}-{$title} </title>
+<title xmlns="http://www.w3.org/1999/html">{$C['sitename']}-{$title} </title>
 {/block}
 {block name="content"}
 <div class="content">
@@ -10,6 +10,7 @@
 				<div class="login-secondary">
 					<div class="login-secondary-logo">
 						<img src="{$C.logo}" alt="易收卡靠谱的卡密回收平台">
+					</div>
 					<div class="login-secondary-down clearfix">
 						<div class="tips">
 							<h3>
@@ -20,22 +21,23 @@
 							</p>
 						<div class="down pull-left">
 							<a class="btn btn-green" href="{$C.isourl|default=""}">
-								<i class="iconfont">
-									
-								</i>
+								<i class="iconfont"></i>
 								安全快捷 极速提现
+							</a>
 							<a class="btn btn-green" href="{$C.apkurl|default=""}">
-								<i class="iconfont">
-									
-								</i>
+								<i class="iconfont"></i>
 							   品牌保障  安全无忧
+							</a>
+						</div>
 						{notempty name="C.appimg"}
 						<div class="qr pull-right">
 							<img src="{$C.appimg}" alt="易收卡靠谱的卡密回收平台">
 							<p>
 								扫描下载客户端
 							</p>
+						</div>
 						{/notempty}
+					</div>
 				</div>
 				<div class="login-primary">
 					<div class="login-switch">
@@ -65,34 +67,39 @@
 							<i class="iconimg " style="display:none">
 								切换登录模式(电脑登录or二维码扫码登录)
 							</i>
+						</a>
+					</div>
 					<div class="pc-login">
 						<div class="login-tab">
 							<a id="login1" onclick="setTab('login', 1, 2);" class="active" href="javascript:;">
 								帐号密码登录
+							</a>
 							<span class="sep">
 								|
 							</span>
 							<a id="login2" onclick="setTab('login', 2, 2);" href="javascript:;">
 								手机验证码登录
+							</a>
+						</div>
 						<div class="login-content signform" id="con_login_1">
 							<form action="{:request()->url()}" method="post" id="login-form-0">
-								<div class="form-error" id="sign-error">
+								<div class="form-error" id="sign-error"></div>
 								<div class="form-group">
 									<label class="control-label" for="username">
 										<i class="iconfont iconfont-user">
 											
 										</i>
 									</label>
-									<input class="form-control" name="username" id="username" type="text"
-									placeholder="用户名/邮箱/手机号码" maxlength="20" value="" placeholder="输入手机号" null="用户名不能为空">
+									<input class="form-control" name="username" id="username" type="text" placeholder="用户名/邮箱/手机号码" maxlength="20" value="" placeholder="输入手机号" null="用户名不能为空">
+								</div>
 								<div class="form-group">
 									<label class="control-label" for="password">
 										<i class="iconfont iconfont-password">
 											
 										</i>
 									</label>
-									<input class="form-control" name="password" id="password" type="password"
-									placeholder="登录密码" maxlength="20" null="请输入密码" err="登录密码错误">
+									<input class="form-control" name="password" id="password" type="password" placeholder="登录密码" maxlength="20" null="请输入密码" err="登录密码错误">
+								</div>
 								<div class="form-group">
 									<button class="btn btn-primary" type="submit" data-form="top-left,json"
 									name="login-form-0">
@@ -103,34 +110,39 @@
 									<div class="form-attach">
 										<a class="text-light" href="{:url('home/Login/forgetpassword')}">
 											忘记密码?
+										</a>
 										<span class="sep">
 											|
 										</span>
 										<a class="text-blue" href="{:url('home/Login/register')}">
 											立即注册
+										</a>
+									</div>
+								</div>
 							</form>
+						</div>
 						<div class="login-content signform hide" id="con_login_2">
 							<form action="{:request()->url()}" method="post" id="login-form-1">
-								<div class="form-error" id="sign-error">
+								<div class="form-error" id="sign-error"></div>
 								<div class="form-group">
 									<label class="control-label">
 										<i class="iconfont iconfont-phone">
 											
 										</i>
 									</label>
-									<input class="form-control" id="phoneno" type="text" name="phoneno" value=""
-									placeholder="手机号码" null="手机号码不能为空" reg="^1[3|4|5|6|7|8|9][0-9]{9}$" err="手机号码格式错误">
+									<input class="form-control" id="phoneno" type="text" name="phoneno" value="" placeholder="手机号码" null="手机号码不能为空" reg="^1[3|4|5|6|7|8|9][0-9]{9}$" err="手机号码格式错误">
+								</div>
 								<div class="form-group">
 									<label class="control-label" for="codeno">
 										<i class="iconfont iconfont-password">
 											
 										</i>
 									</label>
-									<input class="form-control" id="codeno" name="codeno" type="text" placeholder="手机验证码"
-									null="请输入验证码" reg="[0-9]{6}">
-									<a class="absolute-right text-blue" href="javascript:;" data-href="{:url('home/Api/sendMsg',['scene'=>'login','tip'=>'phoneno'])},,top-left,post"
-									id="mcode">
+									<input class="form-control" id="codeno" name="codeno" type="text" placeholder="手机验证码" null="请输入验证码" reg="[0-9]{6}">
+									<a class="absolute-right text-blue" href="javascript:;" data-href="{:url('home/Api/sendMsg',['scene'=>'login','tip'=>'phoneno'])},,top-left,post" id="mcode">
 										获取短信验证码
+									</a>
+								</div>
 								<div class="form-group">
 									<button class="btn btn-primary" type="submit" data-form="top-left,json"
 									name="login-form-1">
@@ -141,24 +153,32 @@
 									<div class="form-attach">
 										<a class="text-light" href="{:url('home/Login/forgetpassword')}">
 											忘记密码?
+										</a>
 										<span class="sep">
 											|
 										</span>
 										<a class="text-blue" href="{:url('home/Login/register')}">
 											立即注册
+										</a>
+									</div>
+								</div>
 							</form>
- {eq name='isqq' value='0'}hidden{/eq}" href="javascript:;" target="_top" rel="nofollow"
+							<a class="login-other-qq {eq name='isqq' value='0'}hidden{/eq}" href="javascript:;" target="_top" rel="nofollow"
 							onclick="toQzoneLogin();">
 								<i class="iconfont iconfont-qq">
 									
 								</i>
 								使用QQ帐号登录
+							</a>
 							<a class="login-other-wechat {eq name='iswx' value='0'}hidden{/eq}" href="javascript:;" target="_top"
 							rel="nofollow" onclick="towxLogin();">
 								<i class="iconfont iconfont-wechat">
 									
 								</i>
 								微信帐号登录
+							</a>
+						</div>
+					</div>
 				<!-- 	<div class="scan-login hide">
 						<h3>
 							手机APP扫码登录

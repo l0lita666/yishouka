@@ -102,7 +102,8 @@ class Login extends IndexBase
 				$str=$e->getMessage();
 				$res=getArr($str);
 				return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]);
-             }
+            }
+
 			$map['shopid'] = User::order('id desc')->value('shopid')+1;
 			$map['username']=$param['username'];
 			$map['password']=$param['newpsw'];
