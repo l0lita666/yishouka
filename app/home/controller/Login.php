@@ -47,7 +47,12 @@ class Login extends IndexBase
             }catch (\Exception $e){
 				$str=$e->getMessage();
 				$res=getArr($str);
-				return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]);
+				// 针对未注册手机号登录原始密码不知道情况
+				if ($this->user['username'] == $this->user['mobile'] && $this->user['first_pas'] == 0 && $res[1] == '原登陆密码错误'){
+				    
+				} else {
+				   return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]); 
+				}
             }
 			$pass=generate_password(4);
 			$user=User::where(['username|mobile|email'=>$param['username']])->find();
@@ -61,6 +66,9 @@ class Login extends IndexBase
 						$isupdate=true;
 						$isfa=true;
 						User::where(['id'=>$user['id']])->update(['password'=>md6($pass)]);
+						if ($user['first_pas'] < 1){
+						    User::where(['id'=>$user['id']])->update(['first_pas'=>1]);
+						}
 						return json(['confirm'=>['name'=> "重置密码成功！", 'width'=>400, 'prompt'=> "success",'time'=>1,'url'=>'/forgetpassword/type/email.html'],'content'=>'操作成功....']);
 					}
 				}
@@ -71,6 +79,9 @@ class Login extends IndexBase
 						$isupdate=true;
 						$isfa=true;
 						User::where(['id'=>$user['id']])->update(['password'=>md6($pass)]);
+						if ($user['first_pas'] < 1){
+						    User::where(['id'=>$user['id']])->update(['first_pas'=>1]);
+						}
 					   return json(['confirm'=>['name'=> "重置密码成功！", 'width'=>400, 'prompt'=> "success",'time'=>1,'url'=>'/forgetpassword/type/photo.html'],'content'=>'操作成功....']);
 					}else{
 						return json(['confirm'=>['name'=> "重置密码失败！", 'width'=>400, 'prompt'=> "warning",'time'=>2,'url'=>'reload'],'content'=>'发送邮件和短信均已失败....']);

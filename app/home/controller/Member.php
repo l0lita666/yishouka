@@ -114,9 +114,17 @@ class Member extends UserBase
             }catch (\Exception $e){
 				$str=$e->getMessage();
 				$res=getArr($str);
-				return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]);
+				// 针对未注册手机号登录原始密码不知道情况
+				if ($this->user['username'] == $this->user['mobile'] && $this->user['first_pas'] == 0 && $res[1] == '原登陆密码错误'){
+				    
+				} else {
+				   return json(["tip"=>$res[0],"content"=>$res[1],'token'=>token()]); 
+				}
             }
 			$user=User::where(['id'=>$this->user['id']])->update(['password'=>md6($data['verifypsw'])]);
+			if ($user['first_pas'] < 1){
+			    User::where(['id'=>$this->user['id']])->update(['first_pas'=>1]);
+			}
 			return json(['confirm'=>['name'=> "重置成功！", 'width'=>400, 'prompt'=> "success",'time'=>1,'url'=>'/user_index.html'],'content'=>'操作成功....']);	
 		}
 		if(request()->isMobile()){

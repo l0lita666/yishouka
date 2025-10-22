@@ -105,31 +105,31 @@
          <a class="btn btn-primary" href="{:url('home/Member/password')}"><i class="iconfont"></i>修改密码</a>
         </div>
 		</li>
-		{eq name='isqq' value='1'}
-		<li class="security-item ">
-			<div class="security-item-bg {notempty name="user.qqopenid"}security-item-qq{/notempty}">
-			   <div class="security-item-icon">
-				 <i class="iconfont"></i>
-				</div>
-				<h5>{notempty name="user.qqopenid"}该账号已绑定QQ{else/}绑定QQ登陆便利{/notempty}</h5>
-			</div>
-			<div class="security-item-action">
-			    {notempty name="user.qqopenid"}
-				<a class="btn btn-green" data-dialog="{:url('home/Member/delqq',['id'=>$user['id']])},350"><i class="iconfont"></i>解绑QQ</a>
-				{else/}
-				<a class="btn btn-primary" href="javascript:toQzoneLogin();"><i class="iconfont"></i>绑定QQ</a>
-				{/notempty}
-			</div>
-        </li>
-        {/eq}
-       <li>
-        <div class="security-item-bg security-item-weixin">
-         <img width="172" src="" />
-        </div>
-        <div class="security-item-action">
-         <p>扫描二维码绑定微信账号<br />你的卖卡处理等信息<br />都会通过微信提醒您</p>
-        </div>
-        </li>
+		<!--{eq name='isqq' value='1'}-->
+		<!--<li class="security-item ">-->
+		<!--	<div class="security-item-bg {notempty name="user.qqopenid"}security-item-qq{/notempty}">-->
+		<!--	   <div class="security-item-icon">-->
+		<!--		 <i class="iconfont"></i>-->
+		<!--		</div>-->
+		<!--		<h5>{notempty name="user.qqopenid"}该账号已绑定QQ{else/}绑定QQ登陆便利{/notempty}</h5>-->
+		<!--	</div>-->
+		<!--	<div class="security-item-action">-->
+		<!--	    {notempty name="user.qqopenid"}-->
+		<!--		<a class="btn btn-green" data-dialog="{:url('home/Member/delqq',['id'=>$user['id']])},350"><i class="iconfont"></i>解绑QQ</a>-->
+		<!--		{else/}-->
+		<!--		<a class="btn btn-primary" href="javascript:toQzoneLogin();"><i class="iconfont"></i>绑定QQ</a>-->
+		<!--		{/notempty}-->
+		<!--	</div>-->
+  <!--      </li>-->
+        <!--{/eq}-->
+       <!--<li>-->
+       <!-- <div class="security-item-bg security-item-weixin">-->
+       <!--  <img width="172" src="" />-->
+       <!-- </div>-->
+       <!-- <div class="security-item-action">-->
+       <!--  <p>扫描二维码绑定微信账号<br />你的卖卡处理等信息<br />都会通过微信提醒您</p>-->
+       <!-- </div>-->
+       <!-- </li>-->
       </ul>
      </div>
      <div class="box usercenter-sellrecords">

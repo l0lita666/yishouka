@@ -29,6 +29,14 @@ class Cash extends UserBase
      */
     public function index()
     {
+        // 提现前判断tradepwd是否存在，不存在提示请先设置安全密码，然后跳转到 url('"home/Member/paymentcodepin"')
+        $user = $this->user;
+        // 判断 tradepwd 是否为空（或未设置）
+        if (empty($user['tradepwd'])) {
+            $this->error('请先设置安全密码', (string)url('home/Member/paymentcodepin'));
+            // $ms=["content"=>"网页跳转中，请稍等......","confirm"=>["name"=>"请先设置安全密码","prompt"=>"success","width"=>350,"time"=>1,"callback"=>"","url"=>"/user_password.html"]];
+            // return json($ms);
+        }
         if($this->pei['alitype']!=1)$this->redirect(url('home/Cash/bank'));
 		View::assign("list",Userbank::where(['bankid'=>-1])->where(['uid'=>$this->user['id']])->select());
 		View::assign("ok",Userbank::where(['bankid'=>-1])->where(['uid'=>$this->user['id']])->count());
@@ -66,7 +74,7 @@ class Cash extends UserBase
 		if ($this->request->isAjax()){
 			$data=input();
 			try{
-//				$this->validate($data, 'cash');
+				$this->validate($data, 'cash');
             }catch (\Exception $e){
 				$str=$e->getMessage();
 				$res=getArr($str);
